@@ -1,6 +1,7 @@
 module.exports = {
   testEnvironment: 'jest-environment-node',
   collectCoverageFrom: ['**/src/**/*.js'],
+  testPathIgnorePatterns: ['<rootDir>/src/tests/'],
   // coverageThreshold: {
   //   global: {
   //     statements: 50,
