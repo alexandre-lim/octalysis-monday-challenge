@@ -1,10 +1,12 @@
 import { WebClient } from '@slack/web-api';
 import { createCustomError } from '../../../../utils/error-handler';
-import { getConversationsList } from '../conversations-list';
+import { getConversationsReplies } from '../conversations-replies';
 
 jest.mock('../utils/slack-api-token', () =>
   require('../utils/__mocks__/slack-api-token')
 );
+
+jest.mock('../utils/channel', () => require('../utils/__mocks__/channel'));
 
 jest.mock('@slack/web-api', () => ({
   WebClient: jest.fn(),
@@ -15,24 +17,29 @@ beforeEach(() => {
   jest.clearAllMocks();
 });
 
-describe('getConversationsList', () => {
-  // https://api.slack.com/methods/conversations.list
-  test('should execute try branch and return a conversationList object', async () => {
-    const listResultsMock = {
+describe('getConversationsReplies', () => {
+  test('should return conversationsReplies on success', async () => {
+    // https://api.slack.com/methods/conversations.replies
+    const repliesResultsMock = {
       ok: true,
-      channels: [],
-      response_metadata: {},
+      messages: [{}],
+      has_more: true,
+      response_metadata: {
+        next_cursor: 'bmV4dF90czoxNTEyMDg1ODYxMDAwNTQz',
+      },
     };
+
     const webClientMock = {
       conversations: {
-        list: () => listResultsMock,
+        replies: () => repliesResultsMock,
       },
     };
 
     WebClient.mockReturnValue(webClientMock);
-    const conversationsList = await getConversationsList();
 
-    expect(conversationsList).toEqual(listResultsMock);
+    const conversationReplies = await getConversationsReplies();
+
+    expect(conversationReplies).toEqual(repliesResultsMock);
   });
 
   test('should enter the catch branch and return an error object with details from slack error', async () => {
@@ -40,45 +47,45 @@ describe('getConversationsList', () => {
       code: 'slack_webapi_platform_error',
       data: {
         ok: false,
-        error: 'invalid_auth',
+        error: 'thread_not_found',
         response_metadata: {},
       },
     };
     const expectedError = createCustomError({
       message:
-        'Error returned by slack api when calling method conversations list',
+        'Error returned by slack api when calling method conversations replies',
       details: slackErrorMock.data,
     });
     const webClientMock = {
       conversations: {
-        list: () => {
+        replies: () => {
           throw slackErrorMock;
         },
       },
     };
 
     WebClient.mockReturnValue(webClientMock);
-    const conversationsListError = await getConversationsList();
+    const conversationsRepliesError = await getConversationsReplies();
 
-    expect(conversationsListError).toEqual(expectedError);
+    expect(conversationsRepliesError).toEqual(expectedError);
   });
 
   test('should enter the catch branch and return an error object with empty details object property', async () => {
     const message =
-      'Unexpected error when calling slack api method conversations list';
+      'Unexpected error when calling slack api method conversations replies';
     const expectedError = createCustomError({ message });
     const webClientMock = {
       conversations: {
-        list: () => {
+        replies: () => {
           throw new Error('Unexpected Error');
         },
       },
     };
 
     WebClient.mockReturnValue(webClientMock);
-    const conversationsListError = await getConversationsList();
+    const conversationsRepliesError = await getConversationsReplies();
 
-    expect(conversationsListError).toEqual(expectedError);
-    expect(conversationsListError).toHaveProperty('details', {});
+    expect(conversationsRepliesError).toEqual(expectedError);
+    expect(conversationsRepliesError).toHaveProperty('details', {});
   });
 });

@@ -1,5 +1,6 @@
 import { getConversationsHistory } from '../methods/conversations-history';
 import { getConversationsList } from '../methods/conversations-list';
+import { getConversationsReplies } from '../methods/conversations-replies';
 
 async function getConversationsListRoute(req, res, next) {
   const results = await getConversationsList();
@@ -11,4 +12,13 @@ async function getConversationsHistoryRoute(req, res, next) {
   results?.error === true ? next(results) : res.json(results);
 }
 
-export { getConversationsListRoute, getConversationsHistoryRoute };
+async function getConversationsRepliesRoute(req, res, next) {
+  const results = await getConversationsReplies();
+  results?.error === true ? next(results) : res.json(results);
+}
+
+export {
+  getConversationsListRoute,
+  getConversationsHistoryRoute,
+  getConversationsRepliesRoute,
+};

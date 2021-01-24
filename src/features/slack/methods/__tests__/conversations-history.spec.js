@@ -18,23 +18,11 @@ beforeEach(() => {
 });
 
 describe('getConversationsHistory', () => {
+  // https://api.slack.com/methods/conversations.history
   test('should return conversationsHistory on success', async () => {
     const historyResultsMock = {
       ok: true,
-      messages: [
-        {
-          type: 'message',
-          user: 'U012AB3CDE',
-          text: 'I find you punny and would like to smell your nose letter',
-          ts: '1512085950.000216',
-        },
-        {
-          type: 'message',
-          user: 'U061F7AUR',
-          text: 'What, you want to smell my shoes better?',
-          ts: '1512104434.000490',
-        },
-      ],
+      messages: [{}],
       has_more: true,
       pin_count: 0,
       response_metadata: {
