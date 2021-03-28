@@ -11,7 +11,7 @@ function getGoogleDocumentsInstance() {
         process.env.NODE_ENV !== 'production'
           ? RootPath.resolve('octalysis-service-account-key.json')
           : null,
-      scopes: ['https://www.googleapis.com/auth/documents.readonly'],
+      scopes: ['https://www.googleapis.com/auth/documents'],
     });
 
     docs = google.docs({ version: 'v1', auth });
