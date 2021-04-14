@@ -3,7 +3,7 @@ import { createCustomError } from '../../../utils/error-handler';
 import { getSlackApiToken } from './utils/slack-api-token';
 import { getMondayChallengeChannelId } from './utils/channel';
 
-async function getConversationsHistory() {
+async function getConversationsHistory(cursor = null) {
   const SLACK_API_TOKEN = getSlackApiToken();
   const SLACK_MONDAY_CHALLENGE_CHANNEL_ID = getMondayChallengeChannelId();
   const web = new WebClient(SLACK_API_TOKEN);
@@ -11,6 +11,7 @@ async function getConversationsHistory() {
   try {
     const conversationsHistory = await web.conversations.history({
       channel: SLACK_MONDAY_CHALLENGE_CHANNEL_ID,
+      cursor,
     });
     return conversationsHistory;
   } catch (error) {
