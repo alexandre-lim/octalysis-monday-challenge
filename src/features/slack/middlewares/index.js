@@ -4,6 +4,8 @@ import {
   getConversationsListRoute,
   getConversationsRepliesRoute,
   getUsersInfoRoute,
+  storeConversationsHistoryRoute,
+  storeConversationsRepliesRoute,
 } from './routes';
 
 const router = express.Router();
@@ -17,5 +19,9 @@ router.get('/conversations.history', getConversationsHistoryRoute);
 router.get('/conversations.replies', getConversationsRepliesRoute);
 
 router.get('/users.info', getUsersInfoRoute);
+
+router.get('/store/conversations.history', storeConversationsHistoryRoute);
+
+router.get('/store/conversations.replies', storeConversationsRepliesRoute);
 
 export { router as slackRouter };

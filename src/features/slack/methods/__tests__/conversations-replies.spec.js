@@ -51,9 +51,10 @@ describe('getConversationsReplies', () => {
         response_metadata: {},
       },
     };
+    const message =
+      'Error returned by slack api when calling method conversations replies';
     const expectedError = createCustomError({
-      message:
-        'Error returned by slack api when calling method conversations replies',
+      message: { error: message, timestamp: undefined },
       details: slackErrorMock.data,
     });
     const webClientMock = {
@@ -73,7 +74,9 @@ describe('getConversationsReplies', () => {
   test('should enter the catch branch and return an error object with empty details object property', async () => {
     const message =
       'Unexpected error when calling slack api method conversations replies';
-    const expectedError = createCustomError({ message });
+    const expectedError = createCustomError({
+      message: { error: message, timestamp: undefined },
+    });
     const webClientMock = {
       conversations: {
         replies: () => {
