@@ -1,10 +1,8 @@
-import { promises as fsPromises } from 'fs';
-import path from 'path';
-import { format } from 'date-fns';
 import { getConversationsHistory } from '../methods/conversations-history';
 import { getConversationsList } from '../methods/conversations-list';
 import { getConversationsReplies } from '../methods/conversations-replies';
 import { getUsersInfo } from '../methods/users-info';
+import { writeHistoryJSON, writeRepliesJSON } from '../../../utils/file';
 
 async function getConversationsListRoute(req, res, next) {
   const results = await getConversationsList();
@@ -53,16 +51,7 @@ async function storeConversationsHistoryRoute(req, res, next) {
   } while (hasNextCursor === true);
 
   if (error === false) {
-    try {
-      const currentDate = format(new Date(), 'yyyy-MM-dd');
-      fsPromises.writeFile(
-        path.resolve(`src/data/history/${currentDate}.json`),
-        JSON.stringify(allHistory, null, 4)
-      );
-      console.log(`Writing file ${currentDate}.json success !`);
-    } catch (err) {
-      console.error(err);
-    }
+    writeHistoryJSON(allHistory);
   }
 
   error === true ? next(allHistory[0]) : res.json(allHistory);
@@ -121,20 +110,11 @@ async function storeConversationsRepliesRoute(req, res, next) {
   if (error.hasError) return next(error.trace);
 
   const allRepliesMessages = [];
-  console.log('Process of writing replies...');
   for (let i = 0, len = allReplies.length; i < len; i += 1) {
     allRepliesMessages.push(...allReplies[i].messages);
-    const timestamp = allReplies[i].messages[0].ts;
-    try {
-      fsPromises.writeFile(
-        path.resolve(`src/data/replies/${timestamp}.json`),
-        JSON.stringify(allReplies[i], null, 4)
-      );
-    } catch (err) {
-      console.error(err);
-    }
   }
-  console.log('Writing replies finished !');
+
+  writeRepliesJSON(allReplies);
 
   res.json({
     parentMessages: filteredMessages.length,
