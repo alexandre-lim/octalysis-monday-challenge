@@ -17,8 +17,7 @@ async function getConversationsReplies(timestamp, limit = 100) {
     return conversationsReplies;
   } catch (error) {
     if (error.code === ErrorCode.PlatformError) {
-      const message =
-        'Error returned by slack api when calling method conversations replies';
+      const message = 'Error returned by slack api when calling method conversations replies';
       return createCustomError({
         message: { error: message, timestamp },
         details: error.data,
@@ -30,9 +29,7 @@ async function getConversationsReplies(timestamp, limit = 100) {
   }
 }
 
-async function getRepliesFromConversationsHistoryMessages(
-  conversationsHistoryMessages = []
-) {
+async function getRepliesFromConversationsHistoryMessages(conversationsHistoryMessages = []) {
   const replies = [];
   let error = {
     hasError: false,

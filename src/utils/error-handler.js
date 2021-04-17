@@ -12,11 +12,7 @@ function errorHandler(error, req, res, next) {
   }
 }
 
-function createCustomError({
-  message = '',
-  statusCode = 500,
-  details = {},
-} = {}) {
+function createCustomError({ message = '', statusCode = 500, details = {} } = {}) {
   return {
     error: true,
     message,

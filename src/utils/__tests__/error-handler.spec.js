@@ -1,8 +1,4 @@
-import {
-  buildReqParameter,
-  buildResParameter,
-  buildNextParameter,
-} from '../../tests/middleware-mock';
+import { buildReqParameter, buildResParameter, buildNextParameter } from '../../tests/middleware-mock';
 import { createCustomError, errorHandler } from '../error-handler';
 
 test('createCustomError should return an object with the default value properties', () => {

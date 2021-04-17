@@ -13,8 +13,7 @@ async function getUsersInfo() {
     return usersInfo;
   } catch (error) {
     if (error.code === ErrorCode.PlatformError) {
-      const message =
-        'Error returned by slack api when calling method users info';
+      const message = 'Error returned by slack api when calling method users info';
       return createCustomError({ message, details: error.data });
     } else {
       const message = `Unexpected error when calling slack api method users info`;
