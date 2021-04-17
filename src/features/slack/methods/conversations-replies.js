@@ -30,4 +30,30 @@ async function getConversationsReplies(timestamp, limit = 100) {
   }
 }
 
-export { getConversationsReplies };
+async function getRepliesFromConversationsHistoryMessages(
+  conversationsHistoryMessages = []
+) {
+  const replies = [];
+  let error = {
+    hasError: false,
+    trace: null,
+  };
+  for (let i = 0, len = conversationsHistoryMessages.length; i < len; i += 1) {
+    if (conversationsHistoryMessages[i].thread_ts) {
+      let timestamp = conversationsHistoryMessages[i].ts;
+      const repliesResult = await getConversationsReplies(timestamp);
+      if (repliesResult?.error === true) {
+        error.hasError = true;
+        error.trace = repliesResult;
+        break;
+      }
+      replies.push(repliesResult);
+    }
+  }
+  return {
+    replies,
+    error,
+  };
+}
+
+export { getConversationsReplies, getRepliesFromConversationsHistoryMessages };

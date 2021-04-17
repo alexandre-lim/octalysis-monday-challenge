@@ -1,6 +1,13 @@
-import { getConversationsHistory } from '../methods/conversations-history';
+import {
+  getConversationsHistory,
+  getAllConversationsHistory,
+  getMessagesFromConversationsHistory,
+} from '../methods/conversations-history';
 import { getConversationsList } from '../methods/conversations-list';
-import { getConversationsReplies } from '../methods/conversations-replies';
+import {
+  getConversationsReplies,
+  getRepliesFromConversationsHistoryMessages,
+} from '../methods/conversations-replies';
 import { getUsersInfo } from '../methods/users-info';
 import { writeHistoryJSON, writeRepliesJSON } from '../../../utils/file';
 
@@ -25,101 +32,50 @@ async function getUsersInfoRoute(req, res, next) {
 }
 
 async function storeConversationsHistoryRoute(req, res, next) {
-  const allHistory = [];
-  let hasNextCursor = false;
-  let error = false;
-  let nextCursor = null;
+  const { allConversationsHistory, error } = await getAllConversationsHistory();
 
-  do {
-    const historyResults = await getConversationsHistory(nextCursor);
-    allHistory.push(historyResults);
-
-    if (historyResults?.error === true) {
-      error = true;
-      break;
-    }
-
-    if (historyResults.has_more === false) break;
-
-    if (
-      historyResults.has_more === true &&
-      historyResults.response_metadata?.next_cursor
-    ) {
-      nextCursor = historyResults.response_metadata.next_cursor;
-      hasNextCursor = true;
-    }
-  } while (hasNextCursor === true);
-
-  if (error === false) {
-    writeHistoryJSON(allHistory);
+  if (error.hasError === false) {
+    writeHistoryJSON(allConversationsHistory);
   }
 
-  error === true ? next(allHistory[0]) : res.json(allHistory);
+  error.hasError === true
+    ? next(error.trace)
+    : res.json(allConversationsHistory);
 }
 
 async function storeConversationsRepliesRoute(req, res, next) {
-  const historyMessages = [];
-  let hasNextCursor = false;
-  let nextCursor = null;
-  let error = {
-    hasError: false,
-    trace: null,
-  };
-  do {
-    const historyResults = await getConversationsHistory(nextCursor);
+  const {
+    allConversationsHistory,
+    error: conversationsHistoryError,
+  } = await getAllConversationsHistory();
 
-    if (historyResults?.error === true) {
-      error.hasError = true;
-      error.trace = historyResults;
-      break;
-    }
-    historyMessages.push(...historyResults.messages);
+  if (conversationsHistoryError.hasError)
+    return next(conversationsHistoryError.trace);
 
-    if (historyResults.has_more === false) break;
-
-    if (
-      historyResults.has_more === true &&
-      historyResults.response_metadata?.next_cursor
-    ) {
-      nextCursor = historyResults.response_metadata.next_cursor;
-      hasNextCursor = true;
-    }
-  } while (hasNextCursor === true);
-
-  if (error.hasError) return next(error.trace);
-
-  const filteredMessages = historyMessages.filter(
-    (message) => typeof message.subtype === 'undefined'
+  const conversationsHistoryMessages = getMessagesFromConversationsHistory(
+    allConversationsHistory
   );
 
-  const allReplies = [];
+  const {
+    replies,
+    error: repliesError,
+  } = await getRepliesFromConversationsHistoryMessages(
+    conversationsHistoryMessages
+  );
 
-  for (let i = 0, len = filteredMessages.length; i < len; i += 1) {
-    if (filteredMessages[i].thread_ts) {
-      let timestamp = filteredMessages[i].ts;
-      const repliesResult = await getConversationsReplies(timestamp);
-      if (repliesResult?.error === true) {
-        error.hasError = true;
-        error.trace = repliesResult;
-        break;
-      }
-      allReplies.push(repliesResult);
-    }
+  if (repliesError.hasError) return next(repliesError.trace);
+
+  const repliesMessages = [];
+  for (let i = 0, len = replies.length; i < len; i += 1) {
+    repliesMessages.push(...replies[i].messages);
   }
 
-  if (error.hasError) return next(error.trace);
-
-  const allRepliesMessages = [];
-  for (let i = 0, len = allReplies.length; i < len; i += 1) {
-    allRepliesMessages.push(...allReplies[i].messages);
-  }
-
-  writeRepliesJSON(allReplies);
+  writeRepliesJSON(replies);
 
   res.json({
-    parentMessages: filteredMessages.length,
-    replies: allReplies.length,
-    repliesMessages: allRepliesMessages.length,
+    parentMessages: conversationsHistoryMessages.length,
+    replies: replies.length,
+    repliesMessages: repliesMessages.length,
   });
 }
 

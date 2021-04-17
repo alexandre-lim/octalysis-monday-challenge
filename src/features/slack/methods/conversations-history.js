@@ -26,4 +26,59 @@ async function getConversationsHistory(cursor = null) {
   }
 }
 
-export { getConversationsHistory };
+async function getAllConversationsHistory() {
+  const allConversationsHistory = [];
+  let hasNextCursor = false;
+  let error = {
+    hasError: false,
+    trace: null,
+  };
+  let nextCursor = null;
+
+  do {
+    const historyResults = await getConversationsHistory(nextCursor);
+
+    if (historyResults?.error === true) {
+      error.hasError = true;
+      error.trace = historyResults;
+      break;
+    }
+
+    allConversationsHistory.push(historyResults);
+
+    if (historyResults.has_more === false) break;
+
+    if (
+      historyResults.has_more === true &&
+      historyResults.response_metadata?.next_cursor
+    ) {
+      nextCursor = historyResults.response_metadata.next_cursor;
+      hasNextCursor = true;
+    }
+  } while (hasNextCursor === true);
+
+  return {
+    allConversationsHistory,
+    error,
+  };
+}
+
+function getMessagesFromConversationsHistory(allConversationsHistory = []) {
+  const conversationsHistoryMessages = [];
+
+  for (let i = 0, len = allConversationsHistory.length; i < len; i += 1) {
+    conversationsHistoryMessages.push(...allConversationsHistory[i].messages);
+  }
+
+  const getMessagesWithoutSubtype = conversationsHistoryMessages.filter(
+    (message) => typeof message.subtype === 'undefined'
+  );
+
+  return getMessagesWithoutSubtype;
+}
+
+export {
+  getConversationsHistory,
+  getAllConversationsHistory,
+  getMessagesFromConversationsHistory,
+};
