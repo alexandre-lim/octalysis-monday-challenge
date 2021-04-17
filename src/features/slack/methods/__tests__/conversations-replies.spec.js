@@ -2,9 +2,7 @@ import { WebClient } from '@slack/web-api';
 import { createCustomError } from '../../../../utils/error-handler';
 import { getConversationsReplies } from '../conversations-replies';
 
-jest.mock('../utils/slack-api-token', () =>
-  require('../utils/__mocks__/slack-api-token')
-);
+jest.mock('../utils/slack-api-token', () => require('../utils/__mocks__/slack-api-token'));
 
 jest.mock('../utils/channel', () => require('../utils/__mocks__/channel'));
 
@@ -51,8 +49,7 @@ describe('getConversationsReplies', () => {
         response_metadata: {},
       },
     };
-    const message =
-      'Error returned by slack api when calling method conversations replies';
+    const message = 'Error returned by slack api when calling method conversations replies';
     const expectedError = createCustomError({
       message: { error: message, timestamp: undefined },
       details: slackErrorMock.data,
@@ -72,8 +69,7 @@ describe('getConversationsReplies', () => {
   });
 
   test('should enter the catch branch and return an error object with empty details object property', async () => {
-    const message =
-      'Unexpected error when calling slack api method conversations replies';
+    const message = 'Unexpected error when calling slack api method conversations replies';
     const expectedError = createCustomError({
       message: { error: message, timestamp: undefined },
     });

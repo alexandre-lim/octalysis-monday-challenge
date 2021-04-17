@@ -11,8 +11,7 @@ async function getConversationsList() {
     return conversationsList;
   } catch (error) {
     if (error.code === ErrorCode.PlatformError) {
-      const message =
-        'Error returned by slack api when calling method conversations list';
+      const message = 'Error returned by slack api when calling method conversations list';
       return createCustomError({ message, details: error.data });
     } else {
       const message = `Unexpected error when calling slack api method conversations list`;

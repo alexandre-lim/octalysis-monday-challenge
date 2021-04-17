@@ -4,10 +4,7 @@ import {
   getMessagesFromConversationsHistory,
 } from '../methods/conversations-history';
 import { getConversationsList } from '../methods/conversations-list';
-import {
-  getConversationsReplies,
-  getRepliesFromConversationsHistoryMessages,
-} from '../methods/conversations-replies';
+import { getConversationsReplies, getRepliesFromConversationsHistoryMessages } from '../methods/conversations-replies';
 import { getUsersInfo } from '../methods/users-info';
 import { writeHistoryJSON, writeRepliesJSON } from '../../../utils/file';
 
@@ -38,28 +35,17 @@ async function storeConversationsHistoryRoute(req, res, next) {
     writeHistoryJSON(allConversationsHistory);
   }
 
-  error.hasError === true
-    ? next(error.trace)
-    : res.json(allConversationsHistory);
+  error.hasError === true ? next(error.trace) : res.json(allConversationsHistory);
 }
 
 async function storeConversationsRepliesRoute(req, res, next) {
-  const {
-    allConversationsHistory,
-    error: conversationsHistoryError,
-  } = await getAllConversationsHistory();
+  const { allConversationsHistory, error: conversationsHistoryError } = await getAllConversationsHistory();
 
-  if (conversationsHistoryError.hasError)
-    return next(conversationsHistoryError.trace);
+  if (conversationsHistoryError.hasError) return next(conversationsHistoryError.trace);
 
-  const conversationsHistoryMessages = getMessagesFromConversationsHistory(
-    allConversationsHistory
-  );
+  const conversationsHistoryMessages = getMessagesFromConversationsHistory(allConversationsHistory);
 
-  const {
-    replies,
-    error: repliesError,
-  } = await getRepliesFromConversationsHistoryMessages(
+  const { replies, error: repliesError } = await getRepliesFromConversationsHistoryMessages(
     conversationsHistoryMessages
   );
 

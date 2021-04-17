@@ -2,9 +2,7 @@ import { WebClient } from '@slack/web-api';
 import { createCustomError } from '../../../../utils/error-handler';
 import { getConversationsHistory } from '../conversations-history';
 
-jest.mock('../utils/slack-api-token', () =>
-  require('../utils/__mocks__/slack-api-token')
-);
+jest.mock('../utils/slack-api-token', () => require('../utils/__mocks__/slack-api-token'));
 
 jest.mock('../utils/channel', () => require('../utils/__mocks__/channel'));
 
@@ -53,8 +51,7 @@ describe('getConversationsHistory', () => {
       },
     };
     const expectedError = createCustomError({
-      message:
-        'Error returned by slack api when calling method conversations history',
+      message: 'Error returned by slack api when calling method conversations history',
       details: slackErrorMock.data,
     });
     const webClientMock = {
@@ -72,8 +69,7 @@ describe('getConversationsHistory', () => {
   });
 
   test('should enter the catch branch and return an error object with empty details object property', async () => {
-    const message =
-      'Unexpected error when calling slack api method conversations history';
+    const message = 'Unexpected error when calling slack api method conversations history';
     const expectedError = createCustomError({ message });
     const webClientMock = {
       conversations: {

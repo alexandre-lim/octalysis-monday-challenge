@@ -2,9 +2,7 @@ import { WebClient } from '@slack/web-api';
 import { createCustomError } from '../../../../utils/error-handler';
 import { getUsersInfo } from '../users-info';
 
-jest.mock('../utils/slack-api-token', () =>
-  require('../utils/__mocks__/slack-api-token')
-);
+jest.mock('../utils/slack-api-token', () => require('../utils/__mocks__/slack-api-token'));
 
 jest.mock('@slack/web-api', () => ({
   WebClient: jest.fn(),

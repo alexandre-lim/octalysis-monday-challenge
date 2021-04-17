@@ -29,6 +29,4 @@ app.use('/api', router);
 // Handle errors with middleware
 app.use(errorHandler);
 
-app.listen(PORT, () =>
-  console.log(`App listening on port ${PORT}! => http://localhost:${PORT}/`)
-);
+app.listen(PORT, () => console.log(`App listening on port ${PORT}! => http://localhost:${PORT}/`));

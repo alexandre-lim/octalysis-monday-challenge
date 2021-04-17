@@ -1,8 +1,4 @@
-import {
-  buildNextParameter,
-  buildReqParameter,
-  buildResParameter,
-} from '../../../../tests/middleware-mock';
+import { buildNextParameter, buildReqParameter, buildResParameter } from '../../../../tests/middleware-mock';
 import { createCustomError } from '../../../../utils/error-handler';
 import { getConversationsList } from '../../methods/conversations-list';
 import { getConversationsHistory } from '../../methods/conversations-history';

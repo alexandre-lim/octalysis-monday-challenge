@@ -6,10 +6,7 @@ function writeHistoryJSON(allHistory) {
   if (Array.isArray(allHistory)) {
     try {
       const currentDate = format(new Date(), 'yyyy-MM-dd');
-      fsPromises.writeFile(
-        path.resolve(`src/data/history/${currentDate}.json`),
-        JSON.stringify(allHistory, null, 4)
-      );
+      fsPromises.writeFile(path.resolve(`src/data/history/${currentDate}.json`), JSON.stringify(allHistory, null, 4));
       console.log(`Writing file ${currentDate}.json success !`);
     } catch (err) {
       console.error(err);

@@ -16,8 +16,7 @@ async function getConversationsHistory(cursor = null) {
     return conversationsHistory;
   } catch (error) {
     if (error.code === ErrorCode.PlatformError) {
-      const message =
-        'Error returned by slack api when calling method conversations history';
+      const message = 'Error returned by slack api when calling method conversations history';
       return createCustomError({ message, details: error.data });
     } else {
       const message = `Unexpected error when calling slack api method conversations history`;
@@ -48,10 +47,7 @@ async function getAllConversationsHistory() {
 
     if (historyResults.has_more === false) break;
 
-    if (
-      historyResults.has_more === true &&
-      historyResults.response_metadata?.next_cursor
-    ) {
+    if (historyResults.has_more === true && historyResults.response_metadata?.next_cursor) {
       nextCursor = historyResults.response_metadata.next_cursor;
       hasNextCursor = true;
     }
@@ -77,8 +73,4 @@ function getMessagesFromConversationsHistory(allConversationsHistory = []) {
   return getMessagesWithoutSubtype;
 }
 
-export {
-  getConversationsHistory,
-  getAllConversationsHistory,
-  getMessagesFromConversationsHistory,
-};
+export { getConversationsHistory, getAllConversationsHistory, getMessagesFromConversationsHistory };
