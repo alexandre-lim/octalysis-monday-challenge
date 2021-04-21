@@ -32,7 +32,7 @@ async function storeConversationsHistoryRoute(req, res, next) {
   const { allConversationsHistory, error } = await getAllConversationsHistory();
 
   if (error.hasError === false) {
-    writeHistoryJSON(allConversationsHistory);
+    await writeHistoryJSON(allConversationsHistory);
   }
 
   error.hasError === true ? next(error.trace) : res.json(allConversationsHistory);
@@ -56,7 +56,7 @@ async function storeConversationsRepliesRoute(req, res, next) {
     repliesMessages.push(...replies[i].messages);
   }
 
-  writeRepliesJSON(replies);
+  await writeRepliesJSON(replies);
 
   res.json({
     parentMessages: conversationsHistoryMessages.length,
