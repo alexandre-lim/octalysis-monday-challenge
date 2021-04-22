@@ -2,7 +2,7 @@
 import { promises as fsPromises } from 'fs';
 import path from 'path';
 import { format } from 'date-fns';
-import { writeHistoryJSON, writeRepliesJSON } from '../file';
+import { writeHistoryJSON, writeRepliesJSON } from '../../file';
 
 const TESTS_DIR_PATH = 'src/data/tests';
 const TESTS_HISTORY_DIR_PATH = `${TESTS_DIR_PATH}/history`;

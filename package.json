@@ -6,8 +6,8 @@
   "author": "Alexandre Lim",
   "license": "ISC",
   "scripts": {
-    "test": "jest --testPathIgnorePatterns='\\.inte\\.[jt]sx?$'",
-    "test:inte": "jest --testPathPattern='\\.inte\\.[jt]sx?$'",
+    "test": "jest --testPathIgnorePatterns='/__tests__/integrations/.*'",
+    "test:inte": "jest --testPathPattern='/__tests__/integrations/.*'",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --watch",
