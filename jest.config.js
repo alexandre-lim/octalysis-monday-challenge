@@ -1,7 +1,9 @@
 module.exports = {
-  testEnvironment: 'jest-environment-node',
+  testEnvironment: 'node',
   collectCoverageFrom: ['**/src/**/*.js'],
-  testPathIgnorePatterns: ['<rootDir>/src/tests/'],
+  testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/src/tests/', '/__tests__/integrations/'],
+  displayName: 'UNIT TEST',
+  maxWorkers: 4,
   // coverageThreshold: {
   //   global: {
   //     statements: 50,
