@@ -6,7 +6,8 @@ import {
 import { getConversationsList } from '../methods/conversations-list';
 import { getConversationsReplies, getRepliesFromConversationsHistoryMessages } from '../methods/conversations-replies';
 import { getUsersInfo } from '../methods/users-info';
-import { writeHistoryJSON, writeRepliesJSON } from '../../../utils/file';
+import { writeHistoryJSON, writeMessagesJSON, writeRepliesJSON } from '../../../utils/file/write';
+import { getHistoryMessagesWithReplies, readStoredConversationsHistory } from '../../../utils/file/read';
 
 async function getConversationsListRoute(req, res, next) {
   const results = await getConversationsList();
@@ -65,6 +66,22 @@ async function storeConversationsRepliesRoute(req, res, next) {
   });
 }
 
+async function storeMessagesRoute(req, res, next) {
+  const conversationsHistory = await readStoredConversationsHistory();
+
+  if (conversationsHistory.error === true) return next(conversationsHistory);
+
+  const conversationsHistoryMessages = getMessagesFromConversationsHistory(conversationsHistory);
+
+  const { historyMessagesWithReplies, error } = await getHistoryMessagesWithReplies(conversationsHistoryMessages);
+
+  if (error.hasError === true) return next(error.trace);
+
+  await writeMessagesJSON(historyMessagesWithReplies);
+
+  res.json(historyMessagesWithReplies.slice(0, 10));
+}
+
 export {
   getConversationsListRoute,
   getConversationsHistoryRoute,
@@ -72,4 +89,5 @@ export {
   getUsersInfoRoute,
   storeConversationsRepliesRoute,
   storeConversationsHistoryRoute,
+  storeMessagesRoute,
 };
