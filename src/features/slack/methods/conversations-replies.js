@@ -31,6 +31,7 @@ async function getConversationsReplies(timestamp, limit = 100) {
 
 async function getRepliesFromConversationsHistoryMessages(conversationsHistoryMessages = []) {
   const replies = [];
+  const historyMessagesWithReplies = [];
   let error = {
     hasError: false,
     trace: null,
@@ -45,10 +46,13 @@ async function getRepliesFromConversationsHistoryMessages(conversationsHistoryMe
         break;
       }
       replies.push(repliesResult);
+      conversationsHistoryMessages[i]['replies'] = repliesResult.messages;
     }
+    historyMessagesWithReplies.push(conversationsHistoryMessages[i]);
   }
   return {
     replies,
+    historyMessagesWithReplies,
     error,
   };
 }
