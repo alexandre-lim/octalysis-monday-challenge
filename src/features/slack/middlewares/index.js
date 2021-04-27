@@ -9,6 +9,7 @@ import {
   storeConversationsRepliesRoute,
   storeMessagesRoute,
   getLatestMessagesRoute,
+  storeLatestMessagesRoute,
 } from './routes';
 
 const router = express.Router();
@@ -32,5 +33,7 @@ router.get('/store/conversations.history', storeConversationsHistoryRoute);
 router.get('/store/conversations.replies', storeConversationsRepliesRoute);
 
 router.get('/store/conversations.messages', storeMessagesRoute);
+
+router.get('/store/conversations.latest', storeLatestMessagesRoute);
 
 export { router as slackRouter };
