@@ -100,7 +100,7 @@ describe('getRepliesFromConversationsHistoryMessages', () => {
     expect(replies).toEqual([]);
   });
 
-  test('should return an array of conversationsReplies on success', async () => {
+  test('should return an array of conversationsReplies and historyMessagesWithReplies on success', async () => {
     const conversationsHistoryMessages = [
       {
         type: 'message',
@@ -146,15 +146,21 @@ describe('getRepliesFromConversationsHistoryMessages', () => {
 
     WebClient.mockReturnValue(webClientMock);
 
-    const { replies, error: repliesError } = await getRepliesFromConversationsHistoryMessages(
-      conversationsHistoryMessages
-    );
+    const {
+      replies,
+      historyMessagesWithReplies,
+      error: repliesError,
+    } = await getRepliesFromConversationsHistoryMessages(conversationsHistoryMessages);
     expect(WebClient).toBeCalledTimes(2);
     expect(repliesError).toEqual({
       hasError: false,
       trace: null,
     });
     expect(replies).toEqual([repliesResultsMock, repliesResultsMock]);
+    expect(historyMessagesWithReplies).toHaveLength(3);
+    expect(historyMessagesWithReplies[0]).toHaveProperty('replies');
+    expect(historyMessagesWithReplies[1]).toHaveProperty('replies');
+    expect(historyMessagesWithReplies[2]).not.toHaveProperty('replies');
   });
 
   test('should return an object error on second loop', async () => {
