@@ -106,6 +106,26 @@ async function storeMessagesRoute(req, res, next) {
   res.json(historyMessagesWithReplies.slice(0, 10));
 }
 
+async function storeLatestMessagesRoute(req, res, next) {
+  const { intervalDate, twoWeeksAgoTimestamp } = getDateFromTwoWeeksAgo();
+
+  const conversationsHistory = await getConversationsHistory(null, twoWeeksAgoTimestamp);
+
+  if (conversationsHistory?.error === true) return next(conversationsHistory);
+
+  const conversationsHistoryMessages = getMessagesFromConversationsHistory([conversationsHistory]);
+
+  const { historyMessagesWithReplies, error: repliesError } = await getRepliesFromConversationsHistoryMessages(
+    conversationsHistoryMessages
+  );
+
+  if (repliesError.hasError) return next(repliesError.trace);
+
+  await writeMessagesJSON(historyMessagesWithReplies);
+
+  res.json({ intervalDate, historyMessagesWithReplies });
+}
+
 export {
   getConversationsListRoute,
   getConversationsHistoryRoute,
@@ -116,4 +136,5 @@ export {
   storeConversationsRepliesRoute,
   storeConversationsHistoryRoute,
   storeMessagesRoute,
+  storeLatestMessagesRoute,
 };
