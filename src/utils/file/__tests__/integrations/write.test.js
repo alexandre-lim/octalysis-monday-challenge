@@ -3,23 +3,19 @@ import { promises as fsPromises } from 'fs';
 import path from 'path';
 import { format } from 'date-fns';
 import { writeHistoryJSON, writeMessagesJSON, writeRepliesJSON } from '../../write';
-import {
-  TESTS_HISTORY_DIR_PATH,
-  TESTS_MESSAGES_DIR_PATH,
-  TESTS_REPLIES_DIR_PATH,
-} from '../../../../tests/integrations/test-path';
+import { DATA_HISTORY_DIR_PATH, DATA_REPLIES_DIR_PATH, DATA_MESSAGES_DIR_PATH } from '../../path';
 
 test('writeHistoryJSON', async () => {
   const spyConsoleLog = jest.spyOn(console, 'log').mockImplementation();
   const data = [{ test: 'test' }];
   const currentDate = format(new Date(), 'yyyy-MM-dd');
 
-  await writeHistoryJSON(data, TESTS_HISTORY_DIR_PATH);
+  await writeHistoryJSON(data);
 
   expect(spyConsoleLog).toHaveBeenCalledTimes(1);
   expect(console.log).toHaveBeenLastCalledWith(`Writing file ${currentDate}.json success !`);
 
-  const result = await fsPromises.readFile(path.resolve(`${TESTS_HISTORY_DIR_PATH}/${currentDate}.json`), {
+  const result = await fsPromises.readFile(path.resolve(`${DATA_HISTORY_DIR_PATH}/${currentDate}.json`), {
     encoding: 'utf-8',
   });
   expect(JSON.parse(result)).toEqual(data);
@@ -75,16 +71,16 @@ test('writeRepliesJSON', async () => {
     },
   ];
 
-  await writeRepliesJSON(replies, TESTS_REPLIES_DIR_PATH);
+  await writeRepliesJSON(replies);
 
   const resultRepliesFile1 = await fsPromises.readFile(
-    path.resolve(`${TESTS_REPLIES_DIR_PATH}/${replies[0].messages[0].ts}.json`),
+    path.resolve(`${DATA_REPLIES_DIR_PATH}/${replies[0].messages[0].ts}.json`),
     {
       encoding: 'utf-8',
     }
   );
   const resultRepliesFile2 = await fsPromises.readFile(
-    path.resolve(`${TESTS_REPLIES_DIR_PATH}/${replies[1].messages[0].ts}.json`),
+    path.resolve(`${DATA_REPLIES_DIR_PATH}/${replies[1].messages[0].ts}.json`),
     {
       encoding: 'utf-8',
     }
@@ -123,22 +119,22 @@ test('writeMessagesJSON', async () => {
     },
   ];
 
-  await writeMessagesJSON(messages, TESTS_MESSAGES_DIR_PATH);
+  await writeMessagesJSON(messages);
 
   const resultMessagesFile1 = await fsPromises.readFile(
-    path.resolve(`${TESTS_MESSAGES_DIR_PATH}/${messages[0].ts}.json`),
+    path.resolve(`${DATA_MESSAGES_DIR_PATH}/${messages[0].ts}.json`),
     {
       encoding: 'utf-8',
     }
   );
 
   const readError = async () =>
-    await fsPromises.readFile(path.resolve(`${TESTS_MESSAGES_DIR_PATH}/${messages[1].ts}.json`), {
+    await fsPromises.readFile(path.resolve(`${DATA_MESSAGES_DIR_PATH}/${messages[1].ts}.json`), {
       encoding: 'utf-8',
     });
 
   const resultMessagesFile2 = await fsPromises.readFile(
-    path.resolve(`${TESTS_MESSAGES_DIR_PATH}/${messages[2].ts}.json`),
+    path.resolve(`${DATA_MESSAGES_DIR_PATH}/${messages[2].ts}.json`),
     {
       encoding: 'utf-8',
     }
