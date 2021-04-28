@@ -70,11 +70,13 @@ async function storeLatestMessagesRoute(req, res, next) {
 
   const conversationsHistoryMessages = getMessagesFromConversationsHistory([conversationsHistory]);
 
-  const { historyMessagesWithReplies, error: repliesError } = await getRepliesFromConversationsHistoryMessages(
+  const { replies, historyMessagesWithReplies, error: repliesError } = await getRepliesFromConversationsHistoryMessages(
     conversationsHistoryMessages
   );
 
   if (repliesError.hasError) return next(repliesError.trace);
+
+  await writeRepliesJSON(replies);
 
   await writeMessagesJSON(historyMessagesWithReplies);
 
