@@ -3,6 +3,7 @@ import logger from 'morgan';
 import { initEnvVar } from './utils/env';
 import { errorHandler } from './utils/error-handler';
 import { slackRouter } from './features/slack/middlewares';
+import { jsonRouter } from './features/json/middlewares';
 
 initEnvVar();
 
@@ -23,6 +24,7 @@ app.get('/', (req, res) => {
 });
 
 router.use('/slack', slackRouter);
+router.use('/json', jsonRouter);
 
 app.use('/api', router);
 
