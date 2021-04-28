@@ -4,22 +4,17 @@ import {
   readStoredConversationsHistory,
   readStoredConversationsReplies,
 } from '../../read';
-import {
-  fakeDate,
-  fakeFileContent,
-  fakeFilename,
-  TESTS_HISTORY_DIR_PATH,
-  TESTS_REPLIES_DIR_PATH,
-} from '../../../../tests/integrations/test-path';
+import { fakeDate, fakeFileContent, fakeFilename } from '../../../../tests/integrations/fake';
+import { DATA_HISTORY_DIR_PATH } from '../../path';
 
 describe('readStoredConversationsHistory', () => {
   it('should read json file with success', async () => {
-    const results = await readStoredConversationsHistory(TESTS_HISTORY_DIR_PATH, fakeDate);
+    const results = await readStoredConversationsHistory(DATA_HISTORY_DIR_PATH, fakeDate);
     expect(results).toEqual(fakeFileContent);
   });
 
   it('should return en error when file do not exist', async () => {
-    const results = await readStoredConversationsHistory(TESTS_HISTORY_DIR_PATH, 'notFoundFile');
+    const results = await readStoredConversationsHistory(DATA_HISTORY_DIR_PATH, 'notFoundFile');
     expect(results).toMatchInlineSnapshot(`
       Object {
         "details": Object {
@@ -39,12 +34,12 @@ describe('readStoredConversationsHistory', () => {
 
 describe('readStoredConversationsReplies', () => {
   it('should read json file with success', async () => {
-    const results = await readStoredConversationsReplies(fakeFilename, TESTS_REPLIES_DIR_PATH);
+    const results = await readStoredConversationsReplies(fakeFilename);
     expect(results).toEqual(fakeFileContent);
   });
 
   it('should return en error when file do not exist', async () => {
-    const results = await readStoredConversationsReplies('notFoundFile', TESTS_REPLIES_DIR_PATH);
+    const results = await readStoredConversationsReplies('notFoundFile');
     expect(results).toMatchInlineSnapshot(`
       Object {
         "details": Object {
