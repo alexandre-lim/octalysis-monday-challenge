@@ -13,4 +13,12 @@ function getDateFromTwoWeeksAgo() {
   };
 }
 
-export { getDateFromTwoWeeksAgo };
+function getFormatTodayDate() {
+  const todayDate = new Date();
+  return {
+    formattedDate: `${format(todayDate, 'MM/dd/yyyy')}`,
+    timestamp: getUnixTime(todayDate),
+  };
+}
+
+export { getDateFromTwoWeeksAgo, getFormatTodayDate };

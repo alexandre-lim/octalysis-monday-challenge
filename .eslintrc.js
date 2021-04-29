@@ -17,5 +17,6 @@ module.exports = {
   rules: {
     'no-console': 'warn',
     'require-await': 'error',
+    'no-unused-vars': ['error', { ignoreRestSiblings: true }],
   },
 };
