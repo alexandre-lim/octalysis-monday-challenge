@@ -44,9 +44,11 @@
   "dependencies": {
     "@slack/web-api": "^6.0.0",
     "app-root-path": "^3.0.0",
+    "cors": "^2.8.5",
     "date-fns": "^2.21.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "mongodb": "^3.6.6",
     "morgan": "^1.10.0"
   }
 }
