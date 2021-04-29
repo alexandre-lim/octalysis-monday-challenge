@@ -6,6 +6,7 @@ import { errorHandler } from './utils/error-handler';
 import { slackRouter } from './features/slack/middlewares';
 import { jsonRouter } from './features/json/middlewares';
 import { expressMongoMiddleware } from './express-mongo';
+import { mongoRouter } from './features/mongo/middlewares';
 
 initEnvVar();
 
@@ -32,6 +33,7 @@ app.get('/', (req, res) => {
 
 router.use('/slack', slackRouter);
 router.use('/json', jsonRouter);
+router.use('/mongo', mongoRouter);
 
 app.use('/api', router);
 
