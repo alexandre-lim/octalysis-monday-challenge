@@ -1,6 +1,5 @@
+import { HISTORY_COLLECTION_NAME } from '../collections';
 import { findOne, insertOne } from '../mongo';
-
-export const HISTORY_COLLECTION_NAME = 'history';
 
 async function dbFindHistoryByDate(dbHandler, date) {
   const historyFoundFromDate = await findOne(dbHandler, HISTORY_COLLECTION_NAME, { date });

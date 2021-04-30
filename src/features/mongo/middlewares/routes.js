@@ -9,13 +9,8 @@ async function insertConversationsAllHistoryRoute(req, res, next) {
   if (error.hasError === false) {
     const db = getMongDb(req);
     if (db) {
-      try {
-        const results = await insertHistoryByDate(db, allConversationsHistory);
-        return res.json(results);
-      } catch (err) {
-        const error = createCustomError({ message: err.message });
-        return next(error);
-      }
+      const results = await insertHistoryByDate(db, allConversationsHistory);
+      return results.error === true ? next(results) : res.json(results);
     } else {
       const error = createCustomError({ message: 'No mongo database instance found in req' });
       return next(error);

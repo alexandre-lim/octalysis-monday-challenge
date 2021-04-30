@@ -1,5 +1,6 @@
 import { promises as fsPromises } from 'fs';
 import path from 'path';
+import mongoSetup from '@shelf/jest-mongodb/setup';
 import {
   DATA_DIR_PATH,
   DATA_HISTORY_DIR_PATH,
@@ -24,4 +25,6 @@ module.exports = async () => {
     path.resolve(`${DATA_REPLIES_DIR_PATH}/${fakeFilename}.json`),
     JSON.stringify(fakeFileContent, null, 4)
   );
+
+  await mongoSetup();
 };
