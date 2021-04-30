@@ -1,14 +1,15 @@
 module.exports = () => {
   return {
-    rootDir: 'src',
-    globalSetup: '<rootDir>/tests/integrations/setup.js',
-    globalTeardown: '<rootDir>/tests/integrations/teardown.js',
+    rootDir: '.',
+    globalSetup: '<rootDir>/src/tests/integrations/setup.js',
+    globalTeardown: '<rootDir>/src/tests/integrations/teardown.js',
     verbose: false,
     bail: false,
     displayName: 'INTEGRATION',
-    testEnvironment: 'node',
+    preset: '@shelf/jest-mongodb',
     testMatch: ['**/__tests__/integrations/**/*.js'],
-    testPathIgnorePatterns: ['<rootDir>/tests/'],
+    testPathIgnorePatterns: ['<rootDir>/src/tests/'],
+    watchPathIgnorePatterns: ['globalConfig'],
     maxWorkers: 4,
   };
 };

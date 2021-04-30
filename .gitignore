@@ -9,3 +9,5 @@ yarn-debug.log*
 yarn-error.log*
 
 .env
+globalConfig.json
+octalysis-service-account-key.json

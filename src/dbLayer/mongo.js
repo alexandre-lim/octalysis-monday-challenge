@@ -1,23 +1,23 @@
 import { createCustomError } from '../utils/error-handler';
 
 async function findOne(dbHandler, collectionName, query = {}, options = {}) {
-  const collection = dbHandler.collection(collectionName);
   try {
+    const collection = dbHandler.collection(collectionName);
     const results = await collection.findOne(query, options);
     return results;
   } catch (err) {
-    const error = createCustomError({ message: 'Error in findOne function' });
+    const error = createCustomError({ message: 'Error in findOne function', details: err });
     return error;
   }
 }
 
 async function insertOne(dbHandler, collectionName, document = {}, options = {}) {
-  const collection = dbHandler.collection(collectionName);
   try {
+    const collection = dbHandler.collection(collectionName);
     const results = await collection.insertOne(document, options);
     return results;
   } catch (err) {
-    const error = createCustomError({ message: 'Error in insertOne function' });
+    const error = createCustomError({ message: 'Error in insertOne function', details: err });
     return error;
   }
 }
