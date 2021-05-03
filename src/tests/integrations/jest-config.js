@@ -9,7 +9,7 @@ module.exports = () => {
     preset: '@shelf/jest-mongodb',
     testMatch: ['**/__tests__/integrations/**/*.js'],
     testPathIgnorePatterns: ['<rootDir>/src/tests/'],
-    watchPathIgnorePatterns: ['globalConfig'],
+    watchPathIgnorePatterns: ['globalConfig', 'data'],
     maxWorkers: 4,
   };
 };

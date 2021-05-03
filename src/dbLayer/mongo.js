@@ -22,4 +22,15 @@ async function insertOne(dbHandler, collectionName, document = {}, options = {})
   }
 }
 
-export { findOne, insertOne };
+async function findOneAndReplace(dbHandler, collectionName, filter = {}, document = {}, options = {}) {
+  try {
+    const collection = dbHandler.collection(collectionName);
+    const results = await collection.findOneAndReplace(filter, document, options);
+    return results;
+  } catch (err) {
+    const error = createCustomError({ message: 'Error in findOneAndReplace function', details: err });
+    return error;
+  }
+}
+
+export { findOne, insertOne, findOneAndReplace };
