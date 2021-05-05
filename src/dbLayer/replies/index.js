@@ -1,6 +1,6 @@
 import { createCustomError } from '../../utils/error-handler';
 import { REPLIES_COLLECTION_NAME } from '../collections';
-import { findOneAndReplace } from '../mongo';
+import { findOne, findOneAndReplace } from '../mongo';
 
 async function dbInsertRepliesByTimestamp(dbHandler, document = {}) {
   try {
@@ -19,4 +19,10 @@ async function dbInsertRepliesByTimestamp(dbHandler, document = {}) {
   }
 }
 
-export { dbInsertRepliesByTimestamp };
+async function dbFindOneRepliesByTimestamp(dbHandler, timestamp = '') {
+  const query = { 'messages.0.ts': { $eq: timestamp } };
+  const historyFoundFromDate = await findOne(dbHandler, REPLIES_COLLECTION_NAME, query);
+  return historyFoundFromDate;
+}
+
+export { dbInsertRepliesByTimestamp, dbFindOneRepliesByTimestamp };
