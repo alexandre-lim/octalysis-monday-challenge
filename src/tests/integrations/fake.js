@@ -180,3 +180,65 @@ export const fakeReplies = {
     acceptedScopes: ['channels:history', 'groups:history', 'mpim:history', 'im:history', 'read'],
   },
 };
+
+export const fakeMessages = {
+  client_msg_id: '1dbeca20-f534-4a3c-a228-f7c22800077f',
+  type: 'message',
+  text:
+    'Congratulations to the winners :trophy: and thanks to everyone for participating and being part of my challenge. It was a pleasure to hear all your thoughts and insights about this topic! :confetti_ball:',
+  user: '',
+  ts: '1618829243.102800',
+  team: '',
+  thread_ts: '1618829243.102800',
+  reply_count: 1,
+  reply_users_count: 1,
+  latest_reply: '1618830210.103200',
+  reply_users: [''],
+  is_locked: false,
+  subscribed: false,
+  replies: [
+    {
+      client_msg_id: '1dbeca20-f534-4a3c-a228-f7c22800077f',
+      type: 'message',
+      text:
+        'Congratulations to the winners :trophy: and thanks to everyone for participating and being part of my challenge. It was a pleasure to hear all your thoughts and insights about this topic! :confetti_ball:',
+      user: '',
+      ts: '1618829243.102800',
+      team: '',
+      thread_ts: '1618829243.102800',
+      reply_count: 1,
+      reply_users_count: 1,
+      latest_reply: '1618830210.103200',
+      reply_users: [''],
+      is_locked: false,
+      subscribed: false,
+    },
+    {
+      client_msg_id: 'd73511b5-6144-4f67-8d03-f8cc0f437cc4',
+      type: 'message',
+      text: 'Thank you for the challenge!',
+      user: '',
+      ts: '1618830210.103200',
+      team: '',
+      blocks: [
+        {
+          type: 'rich_text',
+          block_id: 'bG6',
+          elements: [
+            {
+              type: 'rich_text_section',
+              elements: [
+                {
+                  type: 'text',
+                  text: 'Thank you for the challenge!',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      thread_ts: '1618829243.102800',
+      parent_user_id: '',
+    },
+  ],
+};
