@@ -1,6 +1,6 @@
 import MongoClient from 'mongodb';
 import { HISTORY_COLLECTION_NAME } from '../../collections';
-import { dbFindHistoryByDate, dbInsertHistory } from '../../history';
+import { dbFindLatestHistory, dbFindHistoryByDate, dbInsertHistory } from '../../history';
 
 let connection;
 let db;
@@ -105,5 +105,45 @@ describe('dbInsertHistory', () => {
 
     expect(history.error).toBe(true);
     expect(history?.details?.message).toMatchInlineSnapshot(`"doc parameter must be an object"`);
+  });
+});
+
+describe('dbFindLatestHistory', () => {
+  it('should return an empty array', async () => {
+    const history = await dbFindLatestHistory(db);
+    expect(history).toHaveLength(0);
+  });
+
+  it('should return an array with latest document', async () => {
+    const mockHistory = [
+      { _id: 'history-fake-id-1' },
+      { _id: 'history-fake-id-2', test: 'test' },
+      { _id: 'history-fake-id-3' },
+    ];
+    const latstIndex = mockHistory.length - 1;
+
+    const historyCollection = db.collection(HISTORY_COLLECTION_NAME);
+    await historyCollection.insertMany(mockHistory);
+    const history = await dbFindLatestHistory(db);
+
+    expect(history).toHaveLength(1);
+    expect(history).toEqual([mockHistory[latstIndex]]);
+  });
+
+  it('should return an error when params are omitted', async () => {
+    const history = await dbFindLatestHistory();
+
+    expect(history.error).toBe(true);
+    expect(history?.details?.message).toMatchInlineSnapshot(`"Cannot read property 'collection' of undefined"`);
+  });
+
+  it('should return an error when db param is not right', async () => {
+    const db = 'test';
+    const mockHistory = { _id: 'history-fake-id' };
+
+    const history = await dbFindLatestHistory(db, mockHistory);
+
+    expect(history.error).toBe(true);
+    expect(history?.details?.message).toMatchInlineSnapshot(`"dbHandler.collection is not a function"`);
   });
 });

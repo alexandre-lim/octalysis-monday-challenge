@@ -1,4 +1,4 @@
-import { dbFindHistoryByDate, dbInsertHistory } from '../../dbLayer/history';
+import { dbFindLatestHistory, dbFindHistoryByDate, dbInsertHistory } from '../../dbLayer/history';
 import { getFormatTodayDate } from '../../utils/date';
 
 async function findHistoryByDate(dbHandler, date) {
@@ -29,4 +29,9 @@ async function insertHistoryByDate(dbHandler, histories = []) {
   return insertResults;
 }
 
-export { insertHistoryByDate, findHistoryByDate, insertHistory };
+async function findLatestHistory(dbHandler) {
+  const history = await dbFindLatestHistory(dbHandler);
+  return history?.[0]?.histories ? history?.[0]?.histories : history;
+}
+
+export { insertHistoryByDate, findHistoryByDate, insertHistory, findLatestHistory };

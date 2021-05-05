@@ -1,5 +1,16 @@
 import { createCustomError } from '../utils/error-handler';
 
+function find(dbHandler, collectionName, query = {}, options = {}) {
+  try {
+    const collection = dbHandler.collection(collectionName);
+    const cursor = collection.find(query, options);
+    return cursor;
+  } catch (err) {
+    const error = createCustomError({ message: 'Error in find function', details: err });
+    return error;
+  }
+}
+
 async function findOne(dbHandler, collectionName, query = {}, options = {}) {
   try {
     const collection = dbHandler.collection(collectionName);
@@ -33,4 +44,4 @@ async function findOneAndReplace(dbHandler, collectionName, filter = {}, documen
   }
 }
 
-export { findOne, insertOne, findOneAndReplace };
+export { find, findOne, insertOne, findOneAndReplace };
