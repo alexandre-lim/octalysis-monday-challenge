@@ -70,7 +70,7 @@ describe('insertRepliesByTimestamp', () => {
     expect(results.update.traces).toHaveLength(0);
   });
 
-  it('should return an object with one insert', async () => {
+  it('should return an object with two insert', async () => {
     const replies = [{ messages: [{ ts: '5' }] }, { messages: [{ ts: '10' }] }];
 
     const results = await insertRepliesByTimestamp(db, replies);
