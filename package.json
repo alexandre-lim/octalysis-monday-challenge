@@ -7,7 +7,7 @@
   "license": "ISC",
   "scripts": {
     "test": "jest",
-    "test:inte": "jest --config='./src/tests/integrations/jest-config.js'",
+    "test:inte": "jest --runInBand --config='./src/tests/integrations/jest-config.js'",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --watch",
