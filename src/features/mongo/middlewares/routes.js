@@ -4,9 +4,10 @@ import {
   getMessagesFromConversationsHistory,
 } from '../../slack/methods/conversations-history';
 import { createCustomError } from '../../../utils/error-handler';
-import { insertHistoryByDate } from '../../../services/history';
+import { insertHistoryByDate, findLatestHistory } from '../../../services/history';
 import { getRepliesFromConversationsHistoryMessages } from '../../slack/methods/conversations-replies';
 import { insertRepliesByTimestamp } from '../../../services/replies';
+import { getHistoryMessagesWithReplies, insertMessagesByTimestamp } from '../../../services/messages';
 
 async function insertConversationsAllHistoryRoute(req, res, next) {
   const { allConversationsHistory, error } = await getAllConversationsHistory();
@@ -50,4 +51,25 @@ async function insertConversationsRepliesRoute(req, res, next) {
   }
 }
 
-export { insertConversationsAllHistoryRoute, insertConversationsRepliesRoute };
+async function insertMessagesRoute(req, res, next) {
+  const db = getMongDb(req);
+  if (db) {
+    const conversationsHistory = await findLatestHistory(db);
+
+    if (conversationsHistory.error === true) return next(conversationsHistory);
+
+    const conversationsHistoryMessages = getMessagesFromConversationsHistory(conversationsHistory);
+
+    const { historyMessagesWithReplies, error } = await getHistoryMessagesWithReplies(db, conversationsHistoryMessages);
+
+    if (error.hasError === true) return next(error.trace);
+
+    const results = await insertMessagesByTimestamp(db, historyMessagesWithReplies);
+    return res.json(results);
+  } else {
+    const error = createCustomError({ message: 'No mongo database instance found in req' });
+    return next(error);
+  }
+}
+
+export { insertConversationsAllHistoryRoute, insertConversationsRepliesRoute, insertMessagesRoute };
