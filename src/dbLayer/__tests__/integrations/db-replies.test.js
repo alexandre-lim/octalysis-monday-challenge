@@ -100,7 +100,7 @@ describe('dbFindOneRepliesByTimestamp', () => {
 
     await repliesCollection.insertOne(fakeReplies);
 
-    const replies = await dbFindOneRepliesByTimestamp(db, 'wrondTimestamp');
+    const replies = await dbFindOneRepliesByTimestamp(db, 'wrongTimestamp');
     expect(replies).toBeNull();
   });
 
