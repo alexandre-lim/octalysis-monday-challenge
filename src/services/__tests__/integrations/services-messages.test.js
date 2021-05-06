@@ -104,7 +104,7 @@ describe('insertMessagesByTimestamp', () => {
 });
 
 describe('getHistoryMessagesWithReplies', () => {
-  it('should return an object with an empty array and error to trye when db param is wrong', async () => {
+  it('should return an object with an empty array and error to true when db param is wrong', async () => {
     const fakeDb = null;
     const messages = [{ thread_ts: '5' }, { ts: '10' }];
 
