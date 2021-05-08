@@ -1,5 +1,10 @@
 import express from 'express';
-import { insertConversationsAllHistoryRoute, insertConversationsRepliesRoute, insertMessagesRoute } from './routes';
+import {
+  insertConversationsAllHistoryRoute,
+  insertConversationsRepliesRoute,
+  insertLatestMessagesRoute,
+  insertMessagesRoute,
+} from './routes';
 
 const router = express.Router();
 
@@ -10,5 +15,7 @@ router.get('/insert/conversations.allhistory', insertConversationsAllHistoryRout
 router.get('/insert/conversations.replies', insertConversationsRepliesRoute);
 
 router.get('/insert/conversations.messages', insertMessagesRoute);
+
+router.get('/insert/conversations.latest', insertLatestMessagesRoute);
 
 export { router as mongoRouter };
