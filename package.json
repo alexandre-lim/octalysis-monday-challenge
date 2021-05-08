@@ -16,7 +16,7 @@
     "watch": "webpack --config ./webpack.config.js --watch",
     "start": "node ./build/main.bundle-server.js",
     "dev": "nodemon ./build/main.bundle-server.js",
-    "lint": "eslint -c ./.eslintrc.js ./src/**/*.js",
+    "lint": "eslint -c ./.eslintrc.js './src/**/*.js'",
     "prettier": "prettier --ignore-path .gitignore \"**/*.+(js|json)\"",
     "format": "npm run prettier -- --write",
     "check-format": "npm run prettier -- --list-different",
