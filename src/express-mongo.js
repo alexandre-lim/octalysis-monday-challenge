@@ -7,7 +7,8 @@ function expressMongoMiddleware(req, res, next) {
   let MONGO_URL = `mongodb://${MONGO_DB_USER}:${MONGO_DB_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}`;
 
   if (process.env.NODE_ENV !== 'production') {
-    MONGO_URL = `mongodb://${MONGO_HOST}:${MONGO_PORT}`;
+    const { MONGO_LOCAL_HOST, MONGO_LOCAL_PORT } = process.env;
+    MONGO_URL = `mongodb://${MONGO_LOCAL_HOST}:${MONGO_LOCAL_PORT}`;
   }
 
   MongoClient.connect(MONGO_URL, { useUnifiedTopology: true })
