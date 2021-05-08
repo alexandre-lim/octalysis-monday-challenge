@@ -32,8 +32,11 @@ app.get('/', (req, res) => {
 });
 
 router.use('/slack', slackRouter);
-router.use('/json', jsonRouter);
 router.use('/mongo', mongoRouter);
+
+if (dev) {
+  router.use('/json', jsonRouter);
+}
 
 app.use('/api', router);
 
