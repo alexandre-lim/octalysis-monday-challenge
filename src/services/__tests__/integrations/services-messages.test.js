@@ -129,40 +129,17 @@ describe('getHistoryMessagesWithReplies', () => {
     expect(historyMessagesWithReplies).toHaveLength(0);
   });
 
-  it('should return an object with an empty array and error to false when array messages do not have thread_ts property', async () => {
-    const messages = [{ ts: '5' }, { ts: '10' }];
-
-    const { historyMessagesWithReplies, error } = await getHistoryMessagesWithReplies(db, messages);
-
-    expect(error.hasError).toBe(false);
-    expect(historyMessagesWithReplies).toHaveLength(0);
-  });
-
-  it('should return an object with an array but no replies property', async () => {
-    const messages = [{ thread_ts: '5' }, { ts: '10' }];
-    const expectedResult = [{ thread_ts: '5' }];
-
-    const { historyMessagesWithReplies, error } = await getHistoryMessagesWithReplies(db, messages);
-    expect(error.hasError).toBe(false);
-
-    expect(historyMessagesWithReplies).toHaveLength(1);
-    expect(historyMessagesWithReplies).toEqual(expectedResult);
-  });
-
-  it('should return an object with an array but no replies property', async () => {
+  it('should return an object with an array of 3 messages and one with replies property', async () => {
     const replies = [
-      { ok: true, messages: [{ ts: '5', test: 'test' }] },
-      { ok: true, messages: [{ ts: '10', test: 'test' }] },
+      { ok: true, messages: [{ ts: '5', test: 'Matching thread_ts from messages' }] },
+      { ok: true, messages: [{ ts: '10', text: 'No matching thread_ts from messages' }] },
     ];
     const messages = [
-      { text: 'Good message', thread_ts: '5' },
-      { ts: '10' },
+      { text: 'Message with thread', thread_ts: '5' },
+      { text: 'Message without thread prop', ts: '10' },
       { text: 'Message with no replies prop', thread_ts: '15' },
     ];
-    const expectedResult = [
-      { text: 'Good message', thread_ts: '5', replies: replies[0].messages },
-      { text: 'Message with no replies prop', thread_ts: '15' },
-    ];
+    const expectedResult = [{ ...messages[0], replies: replies[0].messages }, messages[1], messages[2]];
 
     const repliesCollection = db.collection(REPLIES_COLLECTION_NAME);
     await repliesCollection.insertMany(replies);
@@ -170,7 +147,7 @@ describe('getHistoryMessagesWithReplies', () => {
     const { historyMessagesWithReplies, error } = await getHistoryMessagesWithReplies(db, messages);
 
     expect(error.hasError).toBe(false);
-    expect(historyMessagesWithReplies).toHaveLength(2);
+    expect(historyMessagesWithReplies).toHaveLength(3);
     expect(historyMessagesWithReplies).toEqual(expectedResult);
   });
 });

@@ -58,14 +58,18 @@ describe('readStoredConversationsReplies', () => {
 });
 
 describe('getHistoryMessagesWithReplies', () => {
-  it('should return a false error on success', async () => {
+  it('should return an array with two messages and one with replies property on success', async () => {
     const conversationsHistoryMessages = [
       {
+        text: 'Message with a thread_ts',
         thread_ts: fakeFilename,
+      },
+      {
+        text: 'Message without a thread_ts',
       },
     ];
     const { historyMessagesWithReplies, error } = await getHistoryMessagesWithReplies(conversationsHistoryMessages);
-    expect(historyMessagesWithReplies).toHaveLength(1);
+    expect(historyMessagesWithReplies).toHaveLength(2);
     expect(error.hasError).toBe(false);
   });
 

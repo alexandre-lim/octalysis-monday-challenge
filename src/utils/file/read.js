@@ -60,8 +60,8 @@ async function getHistoryMessagesWithReplies(conversationsHistoryMessages = []) 
         break;
       }
       conversationsHistoryMessages[i]['replies'] = conversationsReplies.messages;
-      historyMessagesWithReplies.push(conversationsHistoryMessages[i]);
     }
+    historyMessagesWithReplies.push(conversationsHistoryMessages[i]);
   }
 
   return {
