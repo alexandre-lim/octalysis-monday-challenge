@@ -5,7 +5,7 @@ import { initEnvVar } from './utils/env';
 import { errorHandler } from './utils/error-handler';
 import { slackRouter } from './features/slack/middlewares';
 import { jsonRouter } from './features/json/middlewares';
-import { expressMongoMiddleware } from './express-mongo';
+import { databaseConnect } from './features/mongo/utils/mongo-db';
 import { mongoRouter } from './features/mongo/middlewares';
 
 initEnvVar();
@@ -15,9 +15,8 @@ const dev = process.env.NODE_ENV !== 'production';
 const PORT = process.env.PORT;
 
 app.use(cors());
-app.use(expressMongoMiddleware);
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 
 if (dev) {
   app.use(logger('dev'));
@@ -43,4 +42,11 @@ app.use('/api', router);
 // Handle errors with middleware
 app.use(errorHandler);
 
-app.listen(PORT, () => console.log(`App listening on port ${PORT}! => http://localhost:${PORT}/`));
+databaseConnect(function (err) {
+  if (err) {
+    console.error(err);
+    process.exit(1);
+  } else {
+    app.listen(PORT, () => console.log(`App listening on port ${PORT}! => http://localhost:${PORT}/`));
+  }
+});
