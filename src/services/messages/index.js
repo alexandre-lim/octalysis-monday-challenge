@@ -43,8 +43,8 @@ async function getHistoryMessagesWithReplies(dbHandler, conversationsHistoryMess
         break;
       }
       if (conversationsReplies?.messages) conversationsHistoryMessages[i]['replies'] = conversationsReplies.messages;
-      historyMessagesWithReplies.push(conversationsHistoryMessages[i]);
     }
+    historyMessagesWithReplies.push(conversationsHistoryMessages[i]);
   }
 
   return {
