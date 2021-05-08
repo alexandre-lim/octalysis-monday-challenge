@@ -1,4 +1,3 @@
-import { getMongDb } from '../utils/mongo-db';
 import {
   getAllConversationsHistory,
   getConversationsHistory,
@@ -10,12 +9,13 @@ import { getRepliesFromConversationsHistoryMessages } from '../../slack/methods/
 import { insertRepliesByTimestamp } from '../../../services/replies';
 import { getHistoryMessagesWithReplies, insertMessagesByTimestamp } from '../../../services/messages';
 import { getDateFromTwoWeeksAgo } from '../../../utils/date';
+import { getDatabase } from '../utils/mongo-db';
 
 async function insertConversationsAllHistoryRoute(req, res, next) {
   const { allConversationsHistory, error } = await getAllConversationsHistory();
 
   if (error.hasError === false) {
-    const db = getMongDb(req);
+    const db = getDatabase();
     if (db) {
       const results = await insertHistoryByDate(db, allConversationsHistory);
       return results.error === true ? next(results) : res.json(results);
@@ -42,7 +42,7 @@ async function insertConversationsRepliesRoute(req, res, next) {
   if (repliesError.hasError) return next(repliesError.trace);
 
   if (repliesError.hasError === false) {
-    const db = getMongDb(req);
+    const db = getDatabase();
     if (db) {
       const results = await insertRepliesByTimestamp(db, replies);
       return res.json(results);
@@ -54,7 +54,7 @@ async function insertConversationsRepliesRoute(req, res, next) {
 }
 
 async function insertMessagesRoute(req, res, next) {
-  const db = getMongDb(req);
+  const db = getDatabase();
   if (db) {
     const conversationsHistory = await findLatestHistory(db);
 
@@ -75,7 +75,7 @@ async function insertMessagesRoute(req, res, next) {
 }
 
 async function insertLatestMessagesRoute(req, res, next) {
-  const db = getMongDb(req);
+  const db = getDatabase();
   if (db) {
     const { intervalDate, twoWeeksAgoTimestamp } = getDateFromTwoWeeksAgo();
 
