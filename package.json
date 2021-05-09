@@ -1,8 +1,8 @@
 {
-  "name": "express-starter",
+  "name": "octalysis-app",
   "private": true,
   "version": "1.0.0",
-  "description": "Express starter",
+  "description": "Octalysis monday mini challenge app",
   "author": "Alexandre Lim",
   "license": "ISC",
   "scripts": {

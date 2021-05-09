@@ -1,0 +1,8 @@
+FROM node:14-slim
+
+ENV APP_DIR=/usr/src/app
+
+WORKDIR ${APP_DIR}
+
+COPY . ./
+
