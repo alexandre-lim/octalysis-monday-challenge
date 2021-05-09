@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  octalysis-platform:
+    container_name: octalysis-platform
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        NODE_ENV: development
+    #https://stackoverflow.com/questions/30063907/using-docker-compose-how-to-execute-multiple-commands
+    command: >
+      sh -c "yarn build:dev &&./node_modules/.bin/nodemon ./build/main.bundle-server.js"
+    ports:
+      - 9080:9080
+    volumes:
+      - ${WORKSPACE}/octalysis-monday-challenge/node_modules:/usr/src/app/node_modules
+      - ${WORKSPACE}/octalysis-monday-challenge/.env:/usr/src/app/.env
+    environment:
+      - NODE_ENV=development
+      - PORT=9080
