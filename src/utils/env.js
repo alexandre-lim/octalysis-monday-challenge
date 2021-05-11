@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import RootPath from 'app-root-path';
 
 function initEnvVar() {
-  // Something may be done with dockerisation
+  if (process.env.NODE_ENV === 'production') return;
   const result = dotenv.config({
     path: RootPath.resolve('.env'),
   });
