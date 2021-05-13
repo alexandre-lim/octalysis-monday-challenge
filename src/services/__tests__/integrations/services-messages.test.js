@@ -1,6 +1,11 @@
 import MongoClient from 'mongodb';
-import { insertMessagesByTimestamp, getHistoryMessagesWithReplies } from '../../messages/index';
+import {
+  insertMessagesByTimestamp,
+  getHistoryMessagesWithReplies,
+  getMessagesByIntervalDate,
+} from '../../messages/index';
 import { MESSAGES_COLLECTION_NAME, REPLIES_COLLECTION_NAME } from '../../../dbLayer/collections';
+import { fakeMessagesWithDate } from '../../../tests/integrations/fake';
 
 let connection;
 let db;
@@ -149,5 +154,115 @@ describe('getHistoryMessagesWithReplies', () => {
     expect(error.hasError).toBe(false);
     expect(historyMessagesWithReplies).toHaveLength(3);
     expect(historyMessagesWithReplies).toEqual(expectedResult);
+  });
+});
+
+describe('getMessagesByIntervalDate', () => {
+  it('should return an error if called with wrong db param', async () => {
+    const messages = await getMessagesByIntervalDate(null, '2021', '05', '02');
+    expect(messages.error).toBe(true);
+    expect(messages?.details?.message).toMatchInlineSnapshot(`"aggregationCursor.toArray is not a function"`);
+  });
+
+  it('should return an error when date params are wrong', async () => {
+    const messagesCollection = db.collection(MESSAGES_COLLECTION_NAME);
+    await messagesCollection.insertMany(fakeMessagesWithDate);
+
+    const errorNoParams = await getMessagesByIntervalDate(db);
+    const errorNoYears = await getMessagesByIntervalDate(db, null, '05', '01');
+    const errorNoMonth = await getMessagesByIntervalDate(db, '2021', '', '01');
+    const errorEmptyString = await getMessagesByIntervalDate(db, '', '', '');
+    const errorSpaceStringDay = await getMessagesByIntervalDate(db, '2021', '05', ' ');
+    const errorIncorrectMonth = await getMessagesByIntervalDate(db, '2021', '15');
+    const errorIncorrectDate = await getMessagesByIntervalDate(db, '2021', '02', '31');
+
+    expect(errorNoParams.error).toBe(true);
+    expect(errorNoParams?.message).toMatchInlineSnapshot(
+      `"Error in the requested date: year:undefined / month:undefined  / day:undefined)}"`
+    );
+
+    expect(errorNoYears.error).toBe(true);
+    expect(errorNoYears?.message).toMatchInlineSnapshot(
+      `"Error in the requested date: year:null / month:05  / day:01)}"`
+    );
+
+    expect(errorNoMonth.error).toBe(true);
+    expect(errorNoMonth?.message).toMatchInlineSnapshot(
+      `"Error in the requested date: year:2021 / month:  / day:01)}"`
+    );
+
+    expect(errorEmptyString.error).toBe(true);
+    expect(errorEmptyString?.message).toMatchInlineSnapshot(`"Error in the requested date: year: / month:  / day:)}"`);
+
+    expect(errorSpaceStringDay.error).toBe(true);
+    expect(errorSpaceStringDay?.message).toMatchInlineSnapshot(
+      `"Error in the requested date: year:2021 / month:05  / day: )}"`
+    );
+
+    expect(errorIncorrectMonth.error).toBe(true);
+    expect(errorIncorrectMonth?.message).toMatchInlineSnapshot(
+      `"Error in the requested date: year:2021 / month:15  / day:undefined)}"`
+    );
+
+    expect(errorIncorrectDate.error).toBe(true);
+    expect(errorIncorrectDate?.message).toMatchInlineSnapshot(
+      `"Error in the requested date: year:2021 / month:02  / day:31)}"`
+    );
+  });
+
+  it('should return one message from 2021-05-02', async () => {
+    const messagesCollection = db.collection(MESSAGES_COLLECTION_NAME);
+    await messagesCollection.insertMany(fakeMessagesWithDate);
+
+    const messages = await getMessagesByIntervalDate(db, '2021', '05', '02');
+
+    expect(messages).toHaveLength(1);
+    expect(messages).toEqual([fakeMessagesWithDate[2]]);
+  });
+
+  it('should return two messages from 2021-05-06', async () => {
+    const messagesCollection = db.collection(MESSAGES_COLLECTION_NAME);
+    await messagesCollection.insertMany(fakeMessagesWithDate);
+
+    const messages = await getMessagesByIntervalDate(db, '2021', '05', '6');
+
+    expect(messages).toHaveLength(2);
+    expect(messages).toEqual([fakeMessagesWithDate[0], fakeMessagesWithDate[1]]);
+  });
+
+  it('should return three messages from month 2021-05', async () => {
+    const messagesCollection = db.collection(MESSAGES_COLLECTION_NAME);
+    await messagesCollection.insertMany(fakeMessagesWithDate);
+
+    const messages = await getMessagesByIntervalDate(db, '2021', '05');
+    const messagesNullDay = await getMessagesByIntervalDate(db, '2021', '05', null);
+    const messagesEmptyStringDay = await getMessagesByIntervalDate(db, '2021', '05', '');
+
+    expect(messages).toHaveLength(3);
+    expect(messages).toEqual([fakeMessagesWithDate[0], fakeMessagesWithDate[1], fakeMessagesWithDate[2]]);
+
+    expect(messagesNullDay).toHaveLength(3);
+
+    expect(messagesEmptyStringDay).toHaveLength(3);
+  });
+
+  it('should return five messages from year 2021', async () => {
+    const messagesCollection = db.collection(MESSAGES_COLLECTION_NAME);
+    await messagesCollection.insertMany(fakeMessagesWithDate);
+
+    const messages = await getMessagesByIntervalDate(db, '2021');
+    const messagesEmptyMonth = await getMessagesByIntervalDate(db, '2021', '');
+    const messagesEmptyStringDay = await getMessagesByIntervalDate(db, '2021', '', '');
+
+    expect(messages).toHaveLength(5);
+    expect(messages).toEqual([
+      fakeMessagesWithDate[0],
+      fakeMessagesWithDate[1],
+      fakeMessagesWithDate[2],
+      fakeMessagesWithDate[3],
+      fakeMessagesWithDate[4],
+    ]);
+    expect(messagesEmptyMonth).toHaveLength(5);
+    expect(messagesEmptyStringDay).toHaveLength(5);
   });
 });

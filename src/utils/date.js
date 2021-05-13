@@ -8,7 +8,15 @@ import {
   startOfDay,
   startOfMonth,
   startOfYear,
+  isValid,
+  isExists,
 } from 'date-fns';
+
+export const DATE_MODE = {
+  DAY: 'day',
+  MONTH: 'month',
+  YEAR: 'year',
+};
 
 function getDateFromTwoWeeksAgo() {
   const todayDate = new Date();
@@ -29,6 +37,39 @@ function getFormatTodayDate() {
     formattedDate: `${format(todayDate, 'MM/dd/yyyy')}`,
     timestamp: getUnixTime(todayDate),
   };
+}
+
+function getTimestampInterval(date, mode) {
+  let startDateTimestamp = null;
+  let endDateTimestamp = null;
+  switch (mode) {
+    case DATE_MODE.DAY: {
+      ({ startDayTimestamp: startDateTimestamp, endDayTimestamp: endDateTimestamp } = getDayTimestampInterval(date));
+      return {
+        startDateTimestamp,
+        endDateTimestamp,
+      };
+    }
+    case DATE_MODE.MONTH:
+      ({ startMonthTimestamp: startDateTimestamp, endMonthTimestamp: endDateTimestamp } = getMonthTimestampInterval(
+        date
+      ));
+      return {
+        startDateTimestamp,
+        endDateTimestamp,
+      };
+    case DATE_MODE.YEAR:
+      ({ startYearTimestamp: startDateTimestamp, endYearTimestamp: endDateTimestamp } = getYearTimestampInterval(date));
+      return {
+        startDateTimestamp,
+        endDateTimestamp,
+      };
+    default:
+      return {
+        startDateTimestamp,
+        endDateTimestamp,
+      };
+  }
 }
 
 function getDayTimestampInterval(date) {
@@ -61,10 +102,20 @@ function getYearTimestampInterval(date) {
   };
 }
 
+function checkValidDate(date, year, month, day) {
+  // Month start at 0
+  if (day && day !== '') {
+    return isValid(date) && isExists(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10));
+  }
+  return isValid(date);
+}
+
 export {
   getDateFromTwoWeeksAgo,
   getFormatTodayDate,
+  getTimestampInterval,
   getDayTimestampInterval,
   getMonthTimestampInterval,
   getYearTimestampInterval,
+  checkValidDate,
 };
