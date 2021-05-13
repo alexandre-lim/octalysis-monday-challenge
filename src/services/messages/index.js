@@ -1,5 +1,8 @@
-import { dbInsertMessagesByTimestamp } from '../../dbLayer/messages';
+import isValid from 'date-fns/isValid';
+import { dbGetMessagesByIntervalDate, dbInsertMessagesByTimestamp } from '../../dbLayer/messages';
 import { dbFindOneRepliesByTimestamp } from '../../dbLayer/replies';
+import { checkValidDate, DATE_MODE, getTimestampInterval } from '../../utils/date';
+import { createCustomError } from '../../utils/error-handler';
 
 async function insertMessagesByTimestamp(dbHandler, messages = []) {
   const results = {
@@ -53,4 +56,36 @@ async function getHistoryMessagesWithReplies(dbHandler, conversationsHistoryMess
   };
 }
 
-export { insertMessagesByTimestamp, getHistoryMessagesWithReplies };
+async function getMessagesByIntervalDate(dbHandler, year, month, day) {
+  const dateInfo = {
+    date: null,
+    mode: null,
+  };
+
+  if (day && day?.trim() !== '') {
+    dateInfo.date = new Date(`${year}-${month}-${day}`);
+    dateInfo.mode = DATE_MODE.DAY;
+  }
+
+  if (!isValid(dateInfo.date) && month && month?.trim() !== '' && dateInfo.mode === null) {
+    dateInfo.date = new Date(`${year}-${month}`);
+    dateInfo.mode = DATE_MODE.MONTH;
+  }
+
+  if (!isValid(dateInfo.date) && dateInfo.mode === null) {
+    dateInfo.date = new Date(`${year}`);
+    dateInfo.mode = DATE_MODE.YEAR;
+  }
+
+  if (checkValidDate(dateInfo.date, year, month, day)) {
+    const { startDateTimestamp, endDateTimestamp } = getTimestampInterval(dateInfo.date, dateInfo.mode);
+    const results = await dbGetMessagesByIntervalDate(dbHandler, startDateTimestamp, endDateTimestamp);
+    return results;
+  } else {
+    const message = `Error in the requested date: year:${year} / month:${month}  / day:${day})}`;
+    const error = createCustomError({ message });
+    return error;
+  }
+}
+
+export { insertMessagesByTimestamp, getHistoryMessagesWithReplies, getMessagesByIntervalDate };
