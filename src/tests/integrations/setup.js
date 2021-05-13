@@ -1,4 +1,4 @@
-import { promises as fsPromises } from 'fs';
+import fs, { promises as fsPromises } from 'fs';
 import path from 'path';
 import mongoSetup from '@shelf/jest-mongodb/setup';
 import {
@@ -11,7 +11,15 @@ import { fakeDate, fakeFileContent, fakeFilename } from './fake';
 
 module.exports = async () => {
   console.log('\n----- SETUP INTEGRATION -----\n');
-  await fsPromises.mkdir(path.resolve(DATA_DIR_PATH));
+
+  const rootDir = path.resolve(DATA_DIR_PATH);
+
+  if (fs.existsSync(rootDir)) {
+    console.log(`\n----- REMOVE DIRECTORY ${rootDir}-----\n`);
+    await fsPromises.rmdir(rootDir, { recursive: true, force: true });
+  }
+
+  await fsPromises.mkdir(rootDir);
   await fsPromises.mkdir(path.resolve(DATA_HISTORY_DIR_PATH));
   await fsPromises.mkdir(path.resolve(DATA_REPLIES_DIR_PATH));
   await fsPromises.mkdir(path.resolve(DATA_MESSAGES_DIR_PATH));
