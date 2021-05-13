@@ -1,7 +1,8 @@
 import MongoClient from 'mongodb';
-import { fakeMessages } from '../../../tests/integrations/fake';
+import { fakeMessages, fakeMessagesWithDate } from '../../../tests/integrations/fake';
+import { getDayTimestampInterval, getMonthTimestampInterval, getYearTimestampInterval } from '../../../utils/date';
 import { MESSAGES_COLLECTION_NAME } from '../../collections';
-import { dbInsertMessagesByTimestamp } from '../../messages';
+import { dbInsertMessagesByTimestamp, dbGetMessagesByIntervalDate } from '../../messages';
 
 let connection;
 let db;
@@ -74,5 +75,88 @@ describe('dbInsertMessagesByTimestamp', () => {
     expect(messages.ok).toBeTruthy();
     expect(messages.lastErrorObject.updatedExisting).toBe(true);
     expect(messages.value).toEqual(expectedDocument);
+  });
+});
+
+describe('dbGetMessagesByIntervalDate', () => {
+  it('should return an error if called with no param', async () => {
+    const messages = await dbGetMessagesByIntervalDate();
+    expect(messages.error).toBe(true);
+    expect(messages?.details?.message).toMatchInlineSnapshot(`"aggregationCursor.toArray is not a function"`);
+  });
+
+  it('should return an empty array if no messages are found', async () => {
+    const messages = await dbGetMessagesByIntervalDate(db);
+    expect(messages).toHaveLength(0);
+  });
+
+  it('should return an empty array from 2021-04-01', async () => {
+    const messagesCollection = db.collection(MESSAGES_COLLECTION_NAME);
+    await messagesCollection.insertMany(fakeMessagesWithDate);
+
+    const date = new Date(`2021-04-01`);
+    const { startDayTimestamp, endDayTimestamp } = getDayTimestampInterval(date);
+
+    const messages = await dbGetMessagesByIntervalDate(db, startDayTimestamp, endDayTimestamp);
+
+    expect(messages).toHaveLength(0);
+  });
+
+  it('should return one message from 2021-05-02', async () => {
+    const messagesCollection = db.collection(MESSAGES_COLLECTION_NAME);
+    await messagesCollection.insertMany(fakeMessagesWithDate);
+
+    const date = new Date(`2021-05-02`);
+    const { startDayTimestamp, endDayTimestamp } = getDayTimestampInterval(date);
+
+    const messages = await dbGetMessagesByIntervalDate(db, startDayTimestamp, endDayTimestamp);
+
+    expect(messages).toHaveLength(1);
+    expect(messages).toEqual([fakeMessagesWithDate[2]]);
+  });
+
+  it('should return two messages from 2021-05-06', async () => {
+    const messagesCollection = db.collection(MESSAGES_COLLECTION_NAME);
+    await messagesCollection.insertMany(fakeMessagesWithDate);
+
+    const date = new Date(`2021-05-06`);
+    const { startDayTimestamp, endDayTimestamp } = getDayTimestampInterval(date);
+
+    const messages = await dbGetMessagesByIntervalDate(db, startDayTimestamp, endDayTimestamp);
+
+    expect(messages).toHaveLength(2);
+    expect(messages).toEqual([fakeMessagesWithDate[0], fakeMessagesWithDate[1]]);
+  });
+
+  it('should return three messages from month 2021-05', async () => {
+    const messagesCollection = db.collection(MESSAGES_COLLECTION_NAME);
+    await messagesCollection.insertMany(fakeMessagesWithDate);
+
+    const date = new Date(`2021-05-01`);
+    const { startMonthTimestamp, endMonthTimestamp } = getMonthTimestampInterval(date);
+
+    const messages = await dbGetMessagesByIntervalDate(db, startMonthTimestamp, endMonthTimestamp);
+
+    expect(messages).toHaveLength(3);
+    expect(messages).toEqual([fakeMessagesWithDate[0], fakeMessagesWithDate[1], fakeMessagesWithDate[2]]);
+  });
+
+  it('should return five messages from year 2021', async () => {
+    const messagesCollection = db.collection(MESSAGES_COLLECTION_NAME);
+    await messagesCollection.insertMany(fakeMessagesWithDate);
+
+    const date = new Date(`2021-01-01`);
+    const { startYearTimestamp, endYearTimestamp } = getYearTimestampInterval(date);
+
+    const messages = await dbGetMessagesByIntervalDate(db, startYearTimestamp, endYearTimestamp);
+
+    expect(messages).toHaveLength(5);
+    expect(messages).toEqual([
+      fakeMessagesWithDate[0],
+      fakeMessagesWithDate[1],
+      fakeMessagesWithDate[2],
+      fakeMessagesWithDate[3],
+      fakeMessagesWithDate[4],
+    ]);
   });
 });
