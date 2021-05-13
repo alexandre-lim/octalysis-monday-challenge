@@ -7,7 +7,11 @@ import { createCustomError } from '../../../utils/error-handler';
 import { insertHistoryByDate, findLatestHistory } from '../../../services/history';
 import { getRepliesFromConversationsHistoryMessages } from '../../slack/methods/conversations-replies';
 import { insertRepliesByTimestamp } from '../../../services/replies';
-import { getHistoryMessagesWithReplies, insertMessagesByTimestamp } from '../../../services/messages';
+import {
+  getHistoryMessagesWithReplies,
+  getMessagesByIntervalDate,
+  insertMessagesByTimestamp,
+} from '../../../services/messages';
 import { getDateFromTwoWeeksAgo } from '../../../utils/date';
 import { getDatabase } from '../utils/mongo-db';
 
@@ -104,9 +108,22 @@ async function insertLatestMessagesRoute(req, res, next) {
   }
 }
 
+async function getMessagesRoute(req, res, next) {
+  const db = getDatabase();
+  if (db) {
+    const { year, month, day } = req.query;
+    const results = await getMessagesByIntervalDate(db, year, month, day);
+    res.json(results);
+  } else {
+    const error = createCustomError({ message: 'No mongo database instance found in req' });
+    return next(error);
+  }
+}
+
 export {
   insertConversationsAllHistoryRoute,
   insertConversationsRepliesRoute,
   insertMessagesRoute,
   insertLatestMessagesRoute,
+  getMessagesRoute,
 };
