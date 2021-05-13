@@ -1,4 +1,14 @@
-import { format, subDays, getUnixTime } from 'date-fns';
+import {
+  format,
+  subDays,
+  getUnixTime,
+  endOfDay,
+  endOfMonth,
+  endOfYear,
+  startOfDay,
+  startOfMonth,
+  startOfYear,
+} from 'date-fns';
 
 function getDateFromTwoWeeksAgo() {
   const todayDate = new Date();
@@ -21,4 +31,40 @@ function getFormatTodayDate() {
   };
 }
 
-export { getDateFromTwoWeeksAgo, getFormatTodayDate };
+function getDayTimestampInterval(date) {
+  const startDayTimestamp = getUnixTime(startOfDay(date));
+  const endDayTimestamp = getUnixTime(endOfDay(date));
+
+  return {
+    startDayTimestamp,
+    endDayTimestamp,
+  };
+}
+
+function getMonthTimestampInterval(date) {
+  const startMonthTimestamp = getUnixTime(startOfMonth(date));
+  const endMonthTimestamp = getUnixTime(endOfMonth(date));
+
+  return {
+    startMonthTimestamp,
+    endMonthTimestamp,
+  };
+}
+
+function getYearTimestampInterval(date) {
+  const startYearTimestamp = getUnixTime(startOfYear(date));
+  const endYearTimestamp = getUnixTime(endOfYear(date));
+
+  return {
+    startYearTimestamp,
+    endYearTimestamp,
+  };
+}
+
+export {
+  getDateFromTwoWeeksAgo,
+  getFormatTodayDate,
+  getDayTimestampInterval,
+  getMonthTimestampInterval,
+  getYearTimestampInterval,
+};

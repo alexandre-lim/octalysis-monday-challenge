@@ -1,6 +1,6 @@
 import { createCustomError } from '../../utils/error-handler';
 import { MESSAGES_COLLECTION_NAME } from '../collections';
-import { findOneAndReplace } from '../mongo';
+import { aggregate, findOneAndReplace } from '../mongo';
 
 async function dbInsertMessagesByTimestamp(dbHandler, document = {}) {
   try {
@@ -19,4 +19,36 @@ async function dbInsertMessagesByTimestamp(dbHandler, document = {}) {
   }
 }
 
-export { dbInsertMessagesByTimestamp };
+async function dbGetMessagesByIntervalDate(dbHandler, startDateTimestamp, endDateTimestamp) {
+  try {
+    const pipeline = [
+      {
+        $addFields: {
+          convertTimestamp: {
+            $toDecimal: '$ts',
+          },
+        },
+      },
+      {
+        $match: {
+          convertTimestamp: {
+            $gte: startDateTimestamp,
+            $lte: endDateTimestamp,
+          },
+        },
+      },
+      {
+        $project: { convertTimestamp: 0 },
+      },
+    ];
+    const aggregationCursor = await aggregate(dbHandler, MESSAGES_COLLECTION_NAME, pipeline);
+
+    const results = await aggregationCursor.toArray();
+    return results;
+  } catch (err) {
+    const error = createCustomError({ message: 'Error in dbGetMessagesByIntervalDate function', details: err });
+    return error;
+  }
+}
+
+export { dbInsertMessagesByTimestamp, dbGetMessagesByIntervalDate };
