@@ -44,4 +44,15 @@ async function findOneAndReplace(dbHandler, collectionName, filter = {}, documen
   }
 }
 
-export { find, findOne, insertOne, findOneAndReplace };
+async function aggregate(dbHandler, collectionName, pipeline = [], options = {}) {
+  try {
+    const collection = dbHandler.collection(collectionName);
+    const aggregationCursor = await collection.aggregate(pipeline, options);
+    return aggregationCursor;
+  } catch (err) {
+    const error = createCustomError({ message: 'Error in aggregate function', details: err });
+    return error;
+  }
+}
+
+export { find, findOne, insertOne, findOneAndReplace, aggregate };
