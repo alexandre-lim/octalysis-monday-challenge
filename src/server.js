@@ -7,6 +7,7 @@ import { slackRouter } from './features/slack/middlewares';
 import { jsonRouter } from './features/json/middlewares';
 import { databaseConnect } from './features/mongo/utils/mongo-db';
 import { mongoRouter } from './features/mongo/middlewares';
+import { basicAuthMiddleware } from './utils/auth';
 
 initEnvVar();
 
@@ -27,11 +28,11 @@ if (dev) {
 const router = express.Router();
 
 app.get('/', (req, res) => {
-  res.send('Welcome to Express starter app');
+  res.send('Welcome to Octalysis Monday Mini Challenge app');
 });
 
-router.use('/slack', slackRouter);
-router.use('/mongo', mongoRouter);
+router.use('/slack', basicAuthMiddleware, slackRouter);
+router.use('/mongo', basicAuthMiddleware, mongoRouter);
 
 if (dev) {
   router.use('/json', jsonRouter);
@@ -47,6 +48,9 @@ databaseConnect(function (err) {
     console.error(err);
     process.exit(1);
   } else {
+    if (process.env.NODE_ENV === 'production') {
+      console.log('\n----- PRODUCTION MODE -----\n');
+    }
     app.listen(PORT, () => console.log(`App listening on port ${PORT}! => http://localhost:${PORT}/`));
   }
 });
