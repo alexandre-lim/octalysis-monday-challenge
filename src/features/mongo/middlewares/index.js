@@ -11,13 +11,13 @@ const router = express.Router();
 
 router.use(express.json());
 
-router.get('/insert/conversations.allhistory', insertConversationsAllHistoryRoute);
+router.post('/insert/conversations.allhistory', insertConversationsAllHistoryRoute);
 
-router.get('/insert/conversations.replies', insertConversationsRepliesRoute);
+router.post('/insert/conversations.replies', insertConversationsRepliesRoute);
 
-router.get('/insert/conversations.messages', insertMessagesRoute);
+router.post('/insert/conversations.messages', insertMessagesRoute);
 
-router.get('/insert/conversations.latest', insertLatestMessagesRoute);
+router.post('/insert/conversations.latest', insertLatestMessagesRoute);
 
 router.get('/read/conversations.messages', getMessagesRoute);
 
