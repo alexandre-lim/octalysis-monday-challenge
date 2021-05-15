@@ -28,4 +28,6 @@ services:
     ports:
         - 27017:27017
     volumes:
-        - /home/alim/mongodb/4.4:/usr/src/app/data/db
+        - mongo-data:/data/db
+volumes:
+  mongo-data:
