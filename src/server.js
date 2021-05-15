@@ -6,8 +6,8 @@ import { errorHandler } from './utils/error-handler';
 import { slackRouter } from './features/slack/middlewares';
 import { jsonRouter } from './features/json/middlewares';
 import { databaseConnect } from './features/mongo/utils/mongo-db';
-import { mongoRouter } from './features/mongo/middlewares';
-import { basicAuthMiddleware } from './utils/auth';
+import { mongoPublicRouter, mongoRouter } from './features/mongo/middlewares';
+import { customAuthMiddleware } from './utils/auth';
 
 initEnvVar();
 
@@ -31,8 +31,9 @@ app.get('/', (req, res) => {
   res.send('Welcome to Octalysis Monday Mini Challenge app');
 });
 
-router.use('/slack', basicAuthMiddleware, slackRouter);
-router.use('/mongo', basicAuthMiddleware, mongoRouter);
+router.use('/slack', customAuthMiddleware, slackRouter);
+router.use('/mongo', mongoPublicRouter);
+router.use('/mongo', customAuthMiddleware, mongoRouter);
 
 if (dev) {
   router.use('/json', jsonRouter);

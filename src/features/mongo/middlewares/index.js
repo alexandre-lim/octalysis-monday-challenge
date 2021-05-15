@@ -19,6 +19,10 @@ router.post('/insert/conversations.messages', insertMessagesRoute);
 
 router.post('/insert/conversations.latest', insertLatestMessagesRoute);
 
-router.get('/read/conversations.messages', getMessagesRoute);
+const publicRouter = express.Router();
 
-export { router as mongoRouter };
+publicRouter.use(express.json());
+
+publicRouter.get('/read/conversations.messages', getMessagesRoute);
+
+export { router as mongoRouter, publicRouter as mongoPublicRouter };
