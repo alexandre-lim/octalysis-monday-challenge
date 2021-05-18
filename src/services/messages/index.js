@@ -82,8 +82,8 @@ async function getMessagesByIntervalDate(dbHandler, year, month, day) {
     const results = await dbGetMessagesByIntervalDate(dbHandler, startDateTimestamp, endDateTimestamp);
     return results;
   } else {
-    const message = `Error in the requested date: year:${year} / month:${month}  / day:${day})}`;
-    const error = createCustomError({ message });
+    const message = `Error in the requested date: year:${year} / month:${month}  / day:${day}. Query params must be valid yyyy/mm/dd or yyyy/mm or yyyy}`;
+    const error = createCustomError({ message, statusCode: 400 });
     return error;
   }
 }

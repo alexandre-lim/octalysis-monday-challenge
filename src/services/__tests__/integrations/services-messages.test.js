@@ -178,35 +178,37 @@ describe('getMessagesByIntervalDate', () => {
 
     expect(errorNoParams.error).toBe(true);
     expect(errorNoParams?.message).toMatchInlineSnapshot(
-      `"Error in the requested date: year:undefined / month:undefined  / day:undefined)}"`
+      `"Error in the requested date: year:undefined / month:undefined  / day:undefined. Query params must be valid yyyy/mm/dd or yyyy/mm or yyyy}"`
     );
 
     expect(errorNoYears.error).toBe(true);
     expect(errorNoYears?.message).toMatchInlineSnapshot(
-      `"Error in the requested date: year:null / month:05  / day:01)}"`
+      `"Error in the requested date: year:null / month:05  / day:01. Query params must be valid yyyy/mm/dd or yyyy/mm or yyyy}"`
     );
 
     expect(errorNoMonth.error).toBe(true);
     expect(errorNoMonth?.message).toMatchInlineSnapshot(
-      `"Error in the requested date: year:2021 / month:  / day:01)}"`
+      `"Error in the requested date: year:2021 / month:  / day:01. Query params must be valid yyyy/mm/dd or yyyy/mm or yyyy}"`
     );
 
     expect(errorEmptyString.error).toBe(true);
-    expect(errorEmptyString?.message).toMatchInlineSnapshot(`"Error in the requested date: year: / month:  / day:)}"`);
+    expect(errorEmptyString?.message).toMatchInlineSnapshot(
+      `"Error in the requested date: year: / month:  / day:. Query params must be valid yyyy/mm/dd or yyyy/mm or yyyy}"`
+    );
 
     expect(errorSpaceStringDay.error).toBe(true);
     expect(errorSpaceStringDay?.message).toMatchInlineSnapshot(
-      `"Error in the requested date: year:2021 / month:05  / day: )}"`
+      `"Error in the requested date: year:2021 / month:05  / day: . Query params must be valid yyyy/mm/dd or yyyy/mm or yyyy}"`
     );
 
     expect(errorIncorrectMonth.error).toBe(true);
     expect(errorIncorrectMonth?.message).toMatchInlineSnapshot(
-      `"Error in the requested date: year:2021 / month:15  / day:undefined)}"`
+      `"Error in the requested date: year:2021 / month:15  / day:undefined. Query params must be valid yyyy/mm/dd or yyyy/mm or yyyy}"`
     );
 
     expect(errorIncorrectDate.error).toBe(true);
     expect(errorIncorrectDate?.message).toMatchInlineSnapshot(
-      `"Error in the requested date: year:2021 / month:02  / day:31)}"`
+      `"Error in the requested date: year:2021 / month:02  / day:31. Query params must be valid yyyy/mm/dd or yyyy/mm or yyyy}"`
     );
   });
 
@@ -252,7 +254,8 @@ describe('getMessagesByIntervalDate', () => {
 
     const messages = await getMessagesByIntervalDate(db, '2021');
     const messagesEmptyMonth = await getMessagesByIntervalDate(db, '2021', '');
-    const messagesEmptyStringDay = await getMessagesByIntervalDate(db, '2021', '', '');
+    const messagesEmptyStringMonthDay = await getMessagesByIntervalDate(db, '2021', '', '');
+    const messagesUndefinedMonthDay = await getMessagesByIntervalDate(db, '2021', undefined, undefined);
 
     expect(messages).toHaveLength(5);
     expect(messages).toEqual([
@@ -263,6 +266,7 @@ describe('getMessagesByIntervalDate', () => {
       fakeMessagesWithDate[4],
     ]);
     expect(messagesEmptyMonth).toHaveLength(5);
-    expect(messagesEmptyStringDay).toHaveLength(5);
+    expect(messagesEmptyStringMonthDay).toHaveLength(5);
+    expect(messagesUndefinedMonthDay).toHaveLength(5);
   });
 });
