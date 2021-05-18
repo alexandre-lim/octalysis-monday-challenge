@@ -26,7 +26,7 @@ WORKDIR ${APP_DIR}
 
 COPY --from=builder ${APP_DIR}/package.json ${APP_DIR}/yarn.lock ./
 
-RUN yarn install --frozen-lockfile
+RUN yarn install --frozen-lockfile && yarn cache clean
 
 COPY --from=builder ${APP_DIR}/build ./build/
 
