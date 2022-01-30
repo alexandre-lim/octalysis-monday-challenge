@@ -32,4 +32,4 @@ The [proxy server](https://github.com/Wraithraiser/octalysis-proxy-server) is fo
 
 Finally, the [frontend](https://github.com/Wraithraiser/octalysis-monday-challenge-front) consumes the API through the proxy server to display the data for the user. It's a basic [Create React App](https://create-react-app.dev/) with some lib from React ecosystem like [styled-components](https://styled-components.com/) and [React Query](https://react-query.tanstack.com/).
 
-Here's a flow chart of the [Architecture](https://whimsical.com/archi-technique-JfsCh4TbUh32WZTsvEGdzv@2Ux7TurymN25iRixJCsQ).
+Here's a flow chart of the [Architecture](https://user-images.githubusercontent.com/37420129/151696714-e66320cf-a425-423e-a398-b21b76153271.png).
